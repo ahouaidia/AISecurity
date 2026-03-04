@@ -627,6 +627,15 @@ main {
     font-size: 1em; font-weight: 600;
     color: var(--text-muted); margin: 0;
 }
+.carousel-placeholder.loading p { font-size: 0.85em; }
+.carousel-spinner {
+    width: 36px; height: 36px;
+    border: 3px solid rgba(255,255,255,0.1);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 .carousel-hint {
     font-size: 0.78em; color: var(--text-muted);
     opacity: 0.6; max-width: 480px; line-height: 1.6;
@@ -2710,12 +2719,26 @@ document.addEventListener('DOMContentLoaded', () => {
         policies:      'slides/policies/'
     };
 
+    /* Known slide counts — eliminates sequential probing HTTP requests */
+    const SLIDE_MANIFEST = {
+        overview:      { count: 117, ext: 'PNG' },
+        dashboard:     { count: 2,   ext: 'png' },
+        agent365:      { count: 29,  ext: 'PNG' },
+        entra:         { count: 44,  ext: 'PNG' },
+        defenderxdr:   { count: 70,  ext: 'PNG' },
+        defendercloud: { count: 70,  ext: 'PNG' },
+        purview:       { count: 126, ext: 'PNG' },
+        foundry:       { count: 16,  ext: 'PNG' },
+        policies:      { count: 0,   ext: 'PNG' }
+    };
+
     /* ── Slide Carousel Controller ───────────────────────── */
     const carouselState = {};
     const loadedCarousels = new Set();
 
     /* Probe for slides by trying to load Slide1.PNG, Slide2.PNG, ...
-       When an image fails, we know we've found all slides. */
+       When an image fails, we know we've found all slides.
+       Only used as fallback when SLIDE_MANIFEST has no entry. */
     function probeSlides(folder) {
         return new Promise(resolve => {
             const paths = [];
@@ -2761,6 +2784,17 @@ document.addEventListener('DOMContentLoaded', () => {
             img.src = path;
         }
         tryNext();
+    }
+
+    function getSlidesFromManifest(deckId) {
+        const m = SLIDE_MANIFEST[deckId];
+        const folder = SLIDE_FOLDERS[deckId];
+        if (!m || !folder || m.count === 0) return [];
+        const paths = [];
+        for (let i = 1; i <= m.count; i++) {
+            paths.push(folder + 'Slide' + i + '.' + m.ext);
+        }
+        return paths;
     }
 
     function buildCarousel(deckId, slides) {
@@ -2810,8 +2844,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
         loadedCarousels.add(deckId);
 
-        const slides = await probeSlides(folder);
-        if (slides.length === 0) return;
+        /* Show loading spinner */
+        const frame = document.getElementById('deck-' + deckId);
+        const ph = frame?.querySelector('.carousel-placeholder');
+        if (ph) {
+            ph.classList.add('loading');
+            ph.innerHTML = '<div class="carousel-spinner"></div><p>Loading slides…</p>';
+        }
+
+        /* Use manifest for instant path generation, fallback to probing */
+        const manifest = SLIDE_MANIFEST[deckId];
+        let slides;
+        if (manifest && manifest.count > 0) {
+            slides = getSlidesFromManifest(deckId);
+        } else {
+            slides = await probeSlides(folder);
+        }
+        if (slides.length === 0) {
+            if (ph) {
+                ph.classList.remove('loading');
+                ph.innerHTML = '<svg><use href="#ico-slides"></use></svg><p>No slides available</p>';
+            }
+            return;
+        }
 
         buildCarousel(deckId, slides);
     }
