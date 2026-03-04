@@ -1,0 +1,3390 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Microsoft AI Security &amp; Governance Portfolio — End-to-End Security, Governance, and Protection for AI Agents">
+    <title>Microsoft AI Security &amp; Governance</title>
+    <style>
+/* ═══════════════════════════════════════════════════════════
+   CSS VARIABLES — FLUENT GLASSMORPHISM DARK THEME
+   ═══════════════════════════════════════════════════════════ */
+:root {
+    --bg-deep:       #080c1a;
+    --bg-surface:    #0d1225;
+    --bg-elevated:   #111833;
+    --glass:         rgba(255,255,255,0.045);
+    --glass-hover:   rgba(255,255,255,0.08);
+    --glass-border:  rgba(255,255,255,0.08);
+    --glass-glow:    rgba(0,120,212,0.15);
+    --accent:        #0078d4;
+    --accent-light:  #50e6ff;
+    --accent-grad:   linear-gradient(135deg, #0078d4, #50e6ff);
+    --text:          #e0e2ea;
+    --text-muted:    #7d819a;
+    --text-bright:   #ffffff;
+    --danger:        #ff6b6b;
+    --success:       #34d399;
+    --warning:       #fbbf24;
+    --radius:        16px;
+    --radius-sm:     10px;
+    --blur:          18px;
+    --transition:    0.35s cubic-bezier(.4,0,.2,1);
+    --font:          'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: var(--font);
+    background: var(--bg-deep);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.65;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+a { color: var(--accent-light); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Skip-nav */
+.skip-link {
+    position: absolute; top: -100%; left: 16px;
+    background: var(--accent); color: #fff; padding: 8px 16px;
+    border-radius: 0 0 8px 8px; z-index: 9999;
+    font-weight: 600;
+}
+.skip-link:focus { top: 0; }
+
+/* ═══════════════════════════════════════════════════════════
+   AMBIENT BACKGROUND
+   ═══════════════════════════════════════════════════════════ */
+.ambient {
+    position: fixed; inset: 0; z-index: 0;
+    pointer-events: none; overflow: hidden;
+}
+.ambient .orb {
+    position: absolute; border-radius: 50%;
+    filter: blur(120px); opacity: 0.18;
+    will-change: transform;
+}
+.ambient .orb-1 {
+    width: 600px; height: 600px; top: -10%; right: -5%;
+    background: var(--accent);
+    animation: drift1 25s ease-in-out infinite alternate;
+}
+.ambient .orb-2 {
+    width: 500px; height: 500px; bottom: 10%; left: -8%;
+    background: #6b4fbb;
+    animation: drift2 30s ease-in-out infinite alternate;
+}
+.ambient .orb-3 {
+    width: 450px; height: 450px; top: 50%; left: 40%;
+    background: #00b7c3;
+    animation: drift3 22s ease-in-out infinite alternate;
+}
+@keyframes drift1 { to { transform: translate(-80px, 100px) scale(1.1); } }
+@keyframes drift2 { to { transform: translate(100px, -60px) scale(0.9); } }
+@keyframes drift3 { to { transform: translate(-60px, -80px) scale(1.15); } }
+
+/* ═══════════════════════════════════════════════════════════
+   TOP NAVIGATION BAR
+   ═══════════════════════════════════════════════════════════ */
+.topbar {
+    position: sticky; top: 0; z-index: 1000;
+    display: flex; align-items: center; gap: 18px;
+    padding: 0 28px; height: 56px;
+    background: rgba(13,18,37,0.82);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid var(--glass-border);
+}
+.topbar-brand {
+    display: flex; align-items: center; gap: 12px;
+    flex-shrink: 0;
+}
+.topbar-brand img { height: 44px; }
+.topbar-brand span {
+    font-size: 0.88em; font-weight: 600;
+    color: var(--text-bright); white-space: nowrap;
+}
+
+/* Tab navigation */
+.tab-nav {
+    display: flex; align-items: center; gap: 2px;
+    margin-left: 28px; overflow-x: auto;
+    scrollbar-width: none; flex: 1;
+    -ms-overflow-style: none;
+}
+.tab-nav::-webkit-scrollbar { display: none; }
+
+.tab-btn {
+    background: none; border: none; cursor: pointer;
+    font-family: var(--font); font-size: 0.82em; font-weight: 500;
+    color: var(--text-muted); white-space: nowrap;
+    padding: 16px 14px; position: relative;
+    transition: color var(--transition);
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn[aria-selected="true"] { color: var(--accent-light); }
+.tab-btn[aria-selected="true"]::after {
+    content: ''; position: absolute;
+    bottom: 0; left: 14px; right: 14px; height: 2px;
+    background: var(--accent-grad); border-radius: 2px 2px 0 0;
+}
+.tab-btn:focus-visible {
+    outline: 2px solid var(--accent-light);
+    outline-offset: -2px; border-radius: 4px;
+}
+
+.topbar-actions { margin-left: auto; display: flex; gap: 8px; flex-shrink: 0; }
+
+.btn-icon {
+    background: var(--glass); border: 1px solid var(--glass-border);
+    color: var(--text); cursor: pointer; font-family: var(--font);
+    padding: 6px 14px; border-radius: 6px; font-size: 0.8em;
+    transition: all var(--transition); white-space: nowrap;
+}
+.btn-icon:hover { background: var(--glass-hover); color: var(--text-bright); }
+
+/* ═══════════════════════════════════════════════════════════
+   HERO BANNER
+   ═══════════════════════════════════════════════════════════ */
+.hero-banner {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin-top: 28px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.hero-banner img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.hero {
+    position: relative; z-index: 1;
+    text-align: center; padding: 90px 30px 70px;
+    background: 
+        radial-gradient(ellipse at 30% 20%, rgba(0,120,212,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 80%, rgba(107,79,187,0.1) 0%, transparent 50%);
+}
+.hero h1 {
+    font-size: clamp(2.2em, 5vw, 3.8em);
+    font-weight: 700; color: var(--text-bright);
+    margin-bottom: 16px; letter-spacing: -0.02em;
+    text-shadow: 0 0 60px rgba(0,120,212,0.25);
+    animation: fadeUp 0.8s ease-out;
+}
+.hero p {
+    font-size: clamp(1.05em, 2vw, 1.35em);
+    color: var(--text-muted); max-width: 680px;
+    margin: 0 auto; animation: fadeUp 0.8s ease-out 0.15s both;
+}
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MAIN CONTENT & TAB PANELS
+   ═══════════════════════════════════════════════════════════ */
+main {
+    position: relative; z-index: 1;
+    max-width: 1400px; margin: 0 auto;
+    padding: 0 28px 80px;
+}
+
+.tab-panel {
+    display: none;
+    animation: panelIn 0.45s ease-out;
+}
+.tab-panel.active { display: block; }
+@keyframes panelIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   OVERVIEW — SOLUTION TILES
+   ═══════════════════════════════════════════════════════════ */
+.tiles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px; margin-top: 10px;
+}
+
+.solution-tile {
+    background: var(--glass);
+    backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur));
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius); padding: 36px 28px;
+    cursor: pointer; transition: all var(--transition);
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; position: relative; overflow: hidden;
+}
+.solution-tile::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 0%, var(--glass-glow), transparent 70%);
+    opacity: 0; transition: opacity var(--transition);
+}
+.solution-tile:hover::before { opacity: 1; }
+.solution-tile:hover {
+    transform: translateY(-6px);
+    border-color: rgba(0,120,212,0.25);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3), 0 0 30px var(--glass-glow);
+}
+
+.tile-icon {
+    width: 72px; height: 72px; margin-bottom: 20px;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, rgba(0,120,212,0.15), rgba(80,230,255,0.08));
+    border-radius: 18px; position: relative; z-index: 1;
+}
+.tile-icon svg { width: 40px; height: 40px; fill: var(--accent-light); }
+.tile-icon img { width: 40px; height: 40px; object-fit: contain; }
+
+.solution-tile h3 {
+    font-size: 1.2em; color: var(--text-bright);
+    margin-bottom: 8px; position: relative; z-index: 1;
+}
+.solution-tile p {
+    font-size: 0.88em; color: var(--text-muted);
+    margin-bottom: 16px; position: relative; z-index: 1;
+    flex: 1;
+}
+.tile-arrow {
+    font-size: 0.82em; color: var(--accent-light);
+    font-weight: 600; position: relative; z-index: 1;
+    transition: transform var(--transition);
+}
+.solution-tile:hover .tile-arrow { transform: translateX(4px); }
+
+.solution-tile:focus-visible {
+    outline: 2px solid var(--accent-light);
+    outline-offset: 2px;
+}
+
+/* Tile status badge — in use glow */
+.solution-tile.in-use { border-color: rgba(52,211,153,0.25); }
+.solution-tile.in-use::after {
+    content: ''; position: absolute; top: 12px; right: 12px;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 8px var(--success);
+    z-index: 2;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TILE CONTROLS — TOGGLE & MATURITY
+   ═══════════════════════════════════════════════════════════ */
+.tile-controls {
+    width: 100%; position: relative; z-index: 2;
+    margin-top: 12px; padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex; flex-direction: column; gap: 12px;
+}
+
+/* Toggle Switch */
+.toggle-row {
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 10px;
+}
+.toggle-label {
+    font-size: 0.76em; font-weight: 600;
+    color: var(--text-muted); letter-spacing: 0.02em;
+    user-select: none;
+}
+.toggle-switch {
+    position: relative; width: 44px; height: 24px;
+    flex-shrink: 0;
+}
+.toggle-switch input {
+    opacity: 0; width: 0; height: 0; position: absolute;
+}
+.toggle-track {
+    position: absolute; inset: 0; cursor: pointer;
+    background: rgba(255,255,255,0.08);
+    border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+    transition: all var(--transition);
+}
+.toggle-track::after {
+    content: ''; position: absolute;
+    top: 3px; left: 3px; width: 16px; height: 16px;
+    background: var(--text-muted); border-radius: 50%;
+    transition: all var(--transition);
+}
+.toggle-switch input:checked + .toggle-track {
+    background: rgba(52,211,153,0.2);
+    border-color: rgba(52,211,153,0.4);
+}
+.toggle-switch input:checked + .toggle-track::after {
+    transform: translateX(20px);
+    background: var(--success);
+    box-shadow: 0 0 8px rgba(52,211,153,0.5);
+}
+.toggle-switch input:focus-visible + .toggle-track {
+    outline: 2px solid var(--accent-light);
+    outline-offset: 2px;
+}
+.toggle-status {
+    font-size: 0.72em; font-weight: 600;
+    padding: 2px 8px; border-radius: 10px;
+    letter-spacing: 0.03em; transition: all var(--transition);
+}
+.toggle-status.off  { color: var(--text-muted); background: rgba(255,255,255,0.05); }
+.toggle-status.on   { color: var(--success);    background: rgba(52,211,153,0.12); }
+
+/* Maturity Segmented Bar */
+.maturity-row {
+    display: flex; flex-direction: column; gap: 6px;
+}
+.maturity-label {
+    font-size: 0.72em; font-weight: 600;
+    color: var(--text-muted); letter-spacing: 0.02em;
+}
+.maturity-bar {
+    display: flex; gap: 3px; width: 100%;
+}
+.maturity-seg {
+    flex: 1; padding: 5px 0; text-align: center;
+    font-size: 0.68em; font-weight: 600;
+    color: var(--text-muted); cursor: pointer;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 6px;
+    transition: all var(--transition);
+    user-select: none; letter-spacing: 0.01em;
+    font-family: var(--font);
+}
+.maturity-seg:hover {
+    background: rgba(255,255,255,0.08);
+    color: var(--text);
+}
+/* Active segment — unified green */
+.maturity-seg.active {
+    background: rgba(52,211,153,0.18); border-color: rgba(52,211,153,0.4);
+    color: var(--success); box-shadow: 0 0 8px rgba(52,211,153,0.15);
+}
+/* Fill all segments up to active level — subtle green tint */
+.maturity-bar.level-0 .maturity-seg[data-level="0"],
+.maturity-bar.level-1 .maturity-seg[data-level="0"],
+.maturity-bar.level-1 .maturity-seg[data-level="1"],
+.maturity-bar.level-2 .maturity-seg[data-level="0"],
+.maturity-bar.level-2 .maturity-seg[data-level="1"],
+.maturity-bar.level-2 .maturity-seg[data-level="2"],
+.maturity-bar.level-3 .maturity-seg[data-level="0"],
+.maturity-bar.level-3 .maturity-seg[data-level="1"],
+.maturity-bar.level-3 .maturity-seg[data-level="2"],
+.maturity-bar.level-3 .maturity-seg[data-level="3"] {
+    background: rgba(52,211,153,0.08);
+    border-color: rgba(52,211,153,0.2);
+    color: var(--success);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ADOPTION SUMMARY DASHBOARD
+   ═══════════════════════════════════════════════════════════ */
+.adoption-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px; margin-bottom: 28px;
+}
+.summary-card {
+    background: var(--glass);
+    backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur));
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    padding: 18px 16px; text-align: center;
+}
+.summary-card .sc-value {
+    font-size: 1.8em; font-weight: 700;
+    color: var(--text-bright); line-height: 1.1;
+}
+.summary-card .sc-label {
+    font-size: 0.75em; color: var(--text-muted);
+    margin-top: 4px; font-weight: 600;
+    letter-spacing: 0.03em;
+}
+.summary-card.sc-in-use .sc-value  { color: var(--success); }
+.summary-card.sc-not-use .sc-value { color: var(--text-muted); }
+.summary-card.sc-maturity .sc-value { color: var(--accent-light); }
+.summary-card.sc-score .sc-value {
+    background: var(--accent-grad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   OVERVIEW TWO-COLUMN LAYOUT
+   ═══════════════════════════════════════════════════════════ */
+.overview-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+    margin-bottom: 28px;
+}
+.overview-section {
+    min-width: 0;
+}
+.overview-section > .section-label {
+    margin-bottom: 14px;
+}
+.overview-section .slide-carousel {
+    margin-top: 0;
+    min-width: 0;
+}
+.overview-section .adoption-summary {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-bottom: 0;
+}
+@media (max-width: 900px) {
+    .overview-split {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RISK HEAT MAP
+   ═══════════════════════════════════════════════════════════ */
+.risk-heatmap-section { margin-bottom: 32px; }
+.risk-heatmap-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px; flex-wrap: wrap; gap: 10px;
+}
+.risk-heatmap-header .section-label { margin: 0; }
+.risk-mode-toggle {
+    display: flex; gap: 3px; padding: 3px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px; border: 1px solid var(--glass-border);
+}
+.risk-mode-btn {
+    padding: 6px 14px; border-radius: 6px;
+    font-size: 0.72em; font-weight: 600;
+    color: var(--text-muted); cursor: pointer;
+    border: none; background: transparent;
+    transition: all 0.25s ease;
+    white-space: nowrap; font-family: inherit;
+}
+.risk-mode-btn:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+.risk-mode-btn.active {
+    background: var(--accent); color: #fff;
+    box-shadow: 0 2px 8px rgba(0,120,212,0.3);
+}
+.risk-summary-badges { display: flex; gap: 10px; flex-wrap: wrap; }
+.risk-badge {
+    font-size: 0.72em; font-weight: 600; padding: 4px 12px;
+    border-radius: 20px; backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
+}
+.risk-badge.covered { background: rgba(16,185,129,0.15); color: var(--success); }
+.risk-badge.gaps { background: rgba(239,68,68,0.15); color: #f87171; }
+.risk-heatmap-wrap {
+    overflow-x: auto; border-radius: var(--radius-sm);
+    border: 1px solid var(--glass-border);
+    background: var(--glass);
+    backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur));
+}
+.risk-heatmap {
+    width: 100%; border-collapse: collapse;
+    font-size: 0.72em; white-space: nowrap;
+}
+.risk-heatmap th {
+    padding: 10px 8px; font-weight: 700;
+    color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 0.04em; font-size: 0.85em;
+    border-bottom: 1px solid var(--glass-border);
+    background: rgba(255,255,255,0.03);
+    position: sticky; top: 0; z-index: 2;
+}
+.risk-heatmap th:first-child { text-align: left; min-width: 140px; }
+.risk-heatmap td {
+    padding: 8px 6px; text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    cursor: pointer; position: relative;
+    transition: all 0.2s ease;
+    font-weight: 600; font-size: 0.95em;
+}
+.risk-heatmap td:first-child {
+    text-align: left; font-weight: 600;
+    color: var(--text); padding-left: 12px;
+    cursor: default; white-space: normal; min-width: 140px;
+}
+.risk-heatmap tr:hover td { background: rgba(255,255,255,0.03); }
+.risk-heatmap td:not(:first-child):hover {
+    outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 4px;
+}
+.risk-none   { color: #64748b; }
+.risk-low    { background: rgba(16,185,129,0.12); color: #34d399; }
+.risk-medium { background: rgba(250,204,21,0.12); color: #fbbf24; }
+.risk-high   { background: rgba(251,146,60,0.12); color: #fb923c; }
+.risk-vhigh  { background: rgba(239,68,68,0.15); color: #f87171; }
+.risk-shield {
+    display: inline-block; margin-left: 4px;
+    font-size: 0.9em; vertical-align: middle;
+    opacity: 0; transition: opacity 0.3s;
+}
+.risk-shield.visible { opacity: 1; }
+.risk-detail-popover {
+    display: none; position: fixed; z-index: 1000;
+    background: #111827; border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm); padding: 14px 16px;
+    max-width: 320px; box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    backdrop-filter: blur(16px);
+}
+.risk-detail-popover.show { display: block; }
+.risk-detail-popover h4 {
+    font-size: 0.85em; color: var(--text-bright);
+    margin: 0 0 8px; font-weight: 700;
+}
+.risk-detail-popover .rdp-threat {
+    font-size: 0.75em; color: var(--text-muted); margin-bottom: 8px;
+}
+.risk-detail-popover .rdp-solutions {
+    display: flex; flex-direction: column; gap: 5px;
+}
+.risk-detail-popover .rdp-sol {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.78em; color: var(--text);
+}
+.rdp-sol .rdp-status {
+    font-size: 0.85em; border-radius: 4px;
+    padding: 1px 6px; font-weight: 600;
+}
+.rdp-sol .rdp-status.in-use { background: rgba(16,185,129,0.15); color: var(--success); }
+.rdp-sol .rdp-status.not-in-use { background: rgba(239,68,68,0.1); color: #f87171; }
+
+/* ═══════════════════════════════════════════════════════════
+   SLIDE CAROUSEL
+   ═══════════════════════════════════════════════════════════ */
+.slide-carousel {
+    margin-top: 36px;
+    position: relative;
+}
+.carousel-toolbar {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 10px;
+}
+.carousel-toolbar .section-label { margin: 0; }
+.carousel-counter {
+    font-size: 0.78em; font-weight: 600;
+    color: var(--text-muted); margin-left: auto;
+    background: var(--glass); border: 1px solid var(--glass-border);
+    padding: 3px 12px; border-radius: 20px;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    min-width: 52px; text-align: center;
+}
+.btn-fullscreen-deck,
+.btn-reset-deck {
+    background: var(--glass); border: 1px solid var(--glass-border);
+    color: var(--text-muted); font-size: 0.75em; font-weight: 600;
+    padding: 5px 12px; border-radius: 8px; cursor: pointer;
+    font-family: var(--font);
+    transition: all var(--transition);
+}
+.btn-fullscreen-deck:hover,
+.btn-reset-deck:hover {
+    background: rgba(255,255,255,0.1);
+    color: var(--text);
+}
+.carousel-frame {
+    position: relative; width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: #0a0e1e;
+    border: 1px solid var(--glass-border);
+    user-select: none;
+}
+.carousel-frame img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: contain;
+    transition: opacity 0.3s ease;
+}
+.carousel-placeholder {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    height: 100%; gap: 12px; padding: 24px;
+    text-align: center;
+}
+.carousel-placeholder svg {
+    width: 56px; height: 56px;
+    color: var(--text-muted); opacity: 0.5;
+}
+.carousel-placeholder p {
+    font-size: 1em; font-weight: 600;
+    color: var(--text-muted); margin: 0;
+}
+.carousel-hint {
+    font-size: 0.78em; color: var(--text-muted);
+    opacity: 0.6; max-width: 480px; line-height: 1.6;
+}
+.carousel-hint code {
+    background: rgba(255,255,255,0.08); padding: 2px 8px;
+    border-radius: 4px; font-size: 0.95em;
+    color: var(--accent-cyan);
+}
+.carousel-prev, .carousel-next {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    width: 44px; height: 44px;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 50%; cursor: pointer;
+    color: #fff; font-size: 1.6em; font-weight: 300;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s ease;
+    opacity: 0; z-index: 10;
+    line-height: 1;
+}
+.carousel-frame:hover .carousel-prev,
+.carousel-frame:hover .carousel-next {
+    opacity: 1;
+}
+.carousel-prev { left: 12px; }
+.carousel-next { right: 12px; }
+.carousel-prev:hover, .carousel-next:hover {
+    background: rgba(0,120,212,0.7);
+    border-color: rgba(80,230,255,0.4);
+    transform: translateY(-50%) scale(1.08);
+}
+.carousel-dots {
+    display: flex; justify-content: center; align-items: center;
+    padding: 10px 0 0;
+    gap: 0;
+}
+.carousel-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+    border: none; cursor: pointer;
+    transition: all 0.25s ease;
+    padding: 0;
+    flex-shrink: 0;
+    margin: 0 2.5px;
+}
+.carousel-dot.active {
+    background: var(--accent); width: 20px;
+    border-radius: 4px;
+}
+.carousel-dot.near {
+    background: rgba(255,255,255,0.35);
+}
+.carousel-dot.far {
+    transform: scale(0.6);
+    opacity: 0.4;
+}
+.carousel-dot.hidden-dot {
+    width: 0; height: 0;
+    opacity: 0; padding: 0; margin: 0; border: 0;
+    pointer-events: none;
+}
+/* Fullscreen carousel styles */
+.carousel-frame:fullscreen,
+.carousel-frame:-webkit-full-screen {
+    background: #000;
+    display: flex; align-items: center; justify-content: center;
+}
+.carousel-frame:fullscreen img,
+.carousel-frame:-webkit-full-screen img {
+    object-fit: contain;
+}
+.carousel-frame:fullscreen .carousel-prev,
+.carousel-frame:fullscreen .carousel-next,
+.carousel-frame:-webkit-full-screen .carousel-prev,
+.carousel-frame:-webkit-full-screen .carousel-next {
+    opacity: 0.7;
+    width: 56px; height: 56px;
+    font-size: 2em;
+}
+.carousel-frame:fullscreen .carousel-prev:hover,
+.carousel-frame:fullscreen .carousel-next:hover,
+.carousel-frame:-webkit-full-screen .carousel-prev:hover,
+.carousel-frame:-webkit-full-screen .carousel-next:hover {
+    opacity: 1;
+}
+.carousel-fs-counter {
+    display: none;
+}
+.carousel-frame:fullscreen .carousel-fs-counter,
+.carousel-frame:-webkit-full-screen .carousel-fs-counter {
+    display: block;
+    position: absolute; bottom: 20px; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+    padding: 6px 18px; border-radius: 20px;
+    font-size: 0.85em; font-weight: 600;
+    color: rgba(255,255,255,0.85);
+    z-index: 10;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.carousel-fs-hint {
+    display: none;
+}
+.carousel-frame:fullscreen .carousel-fs-hint,
+.carousel-frame:-webkit-full-screen .carousel-fs-hint {
+    display: block;
+    position: absolute; top: 16px; right: 18px;
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
+    padding: 4px 14px; border-radius: 8px;
+    font-size: 0.72em; font-weight: 500;
+    color: rgba(255,255,255,0.5);
+    z-index: 10;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SOLUTION DETAIL — HERO HEADER
+   ═══════════════════════════════════════════════════════════ */
+.sol-hero {
+    display: flex; align-items: center; gap: 28px;
+    padding: 40px 0 30px; flex-wrap: wrap;
+}
+.sol-hero-icon {
+    width: 86px; height: 86px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, rgba(0,120,212,0.18), rgba(80,230,255,0.08));
+    border-radius: 22px; border: 1px solid rgba(0,120,212,0.2);
+}
+.sol-hero-icon svg { width: 48px; height: 48px; fill: var(--accent-light); }
+.sol-hero-icon img { width: 48px; height: 48px; object-fit: contain; }
+.sol-hero h2 {
+    font-size: 2em; color: var(--text-bright);
+    margin-bottom: 6px; font-weight: 700;
+}
+.sol-hero .overview-text {
+    font-size: 1em; color: var(--text-muted);
+    max-width: 700px; line-height: 1.7;
+}
+
+/* Capability tags */
+.cap-bar {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    padding-bottom: 32px;
+}
+.cap-tag {
+    padding: 5px 14px; font-size: 0.78em; font-weight: 600;
+    border-radius: 20px; letter-spacing: 0.02em;
+    background: rgba(0,120,212,0.12); color: var(--accent-light);
+    border: 1px solid rgba(0,120,212,0.2);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FLIP CARDS
+   ═══════════════════════════════════════════════════════════ */
+.flip-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 24px; margin-bottom: 40px;
+}
+
+.flip-card {
+    perspective: 1200px; height: 340px;
+    cursor: pointer; outline: none;
+}
+.flip-card-inner {
+    position: relative; width: 100%; height: 100%;
+    transition: transform 0.6s cubic-bezier(.4,0,.2,1);
+    transform-style: preserve-3d;
+}
+.flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+
+.flip-front, .flip-back {
+    position: absolute; inset: 0;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: var(--radius);
+    background: var(--glass);
+    backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur));
+    border: 1px solid var(--glass-border);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+.flip-card:hover .flip-front,
+.flip-card:hover .flip-back {
+    border-color: rgba(0,120,212,0.2);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25), 0 0 20px var(--glass-glow);
+}
+
+.flip-front {
+    align-items: center; justify-content: center;
+    text-align: center; padding: 32px 24px;
+}
+.flip-front .card-icon {
+    width: 68px; height: 68px; margin-bottom: 18px;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, rgba(0,120,212,0.15), rgba(80,230,255,0.08));
+    border-radius: 18px;
+}
+.flip-front .card-icon svg { width: 36px; height: 36px; fill: var(--accent-light); }
+.flip-front .card-icon img { width: 36px; height: 36px; object-fit: contain; }
+.flip-front h3 {
+    font-size: 1.15em; color: var(--text-bright);
+    margin-bottom: 8px;
+}
+.flip-front .card-subtitle {
+    font-size: 0.85em; color: var(--text-muted);
+    margin-bottom: 16px; line-height: 1.5;
+}
+.flip-hint {
+    font-size: 0.72em; color: var(--text-muted);
+    margin-top: auto; opacity: 0.7;
+}
+
+.flip-back {
+    transform: rotateY(180deg);
+    padding: 28px 24px;
+    justify-content: flex-start;
+}
+.flip-back h4 {
+    font-size: 1.05em; color: var(--accent-light);
+    margin-bottom: 6px;
+}
+.flip-back .card-path {
+    font-size: 0.72em; color: var(--text-muted);
+    font-family: 'Cascadia Code', 'Consolas', monospace;
+    margin-bottom: 12px; padding: 4px 10px;
+    background: rgba(255,255,255,0.04); border-radius: 6px;
+    display: inline-block;
+}
+.flip-back p {
+    font-size: 0.88em; color: var(--text);
+    line-height: 1.65; flex: 1;
+    overflow-y: auto;
+}
+.flip-back p::-webkit-scrollbar { width: 4px; }
+.flip-back p::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+
+.flip-back .card-links {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-top: 14px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════════════════════════ */
+.btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 18px; font-size: 0.82em; font-weight: 600;
+    font-family: var(--font);
+    color: var(--text-bright); border-radius: 8px;
+    text-decoration: none; cursor: pointer;
+    transition: all var(--transition); white-space: nowrap;
+    border: none;
+}
+.btn-primary {
+    background: var(--accent-grad);
+    box-shadow: 0 4px 16px rgba(0,120,212,0.3);
+}
+.btn-primary:hover {
+    box-shadow: 0 6px 24px rgba(0,120,212,0.45);
+    transform: translateY(-1px);
+    text-decoration: none;
+}
+.btn-glass {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    color: var(--accent-light);
+}
+.btn-glass:hover {
+    background: rgba(0,120,212,0.15);
+    border-color: rgba(0,120,212,0.3);
+    text-decoration: none;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESOURCES SECTION
+   ═══════════════════════════════════════════════════════════ */
+.resources-section {
+    margin-top: 20px; padding-top: 32px;
+    border-top: 1px solid var(--glass-border);
+}
+.resources-section h3 {
+    font-size: 1.15em; color: var(--text-bright);
+    margin-bottom: 20px;
+}
+.resource-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+}
+.resource-link {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 18px; border-radius: var(--radius-sm);
+    background: var(--glass); border: 1px solid var(--glass-border);
+    transition: all var(--transition); text-decoration: none;
+}
+.resource-link:hover {
+    background: var(--glass-hover);
+    border-color: rgba(0,120,212,0.2);
+    text-decoration: none;
+    transform: translateX(4px);
+}
+.resource-link svg { width: 20px; height: 20px; fill: var(--accent-light); flex-shrink: 0; }
+.resource-link img { width: 20px; height: 20px; object-fit: contain; flex-shrink: 0; }
+.resource-link span { font-size: 0.88em; color: var(--text); }
+
+/* ═══════════════════════════════════════════════════════════
+   SECTION TITLES INSIDE PANELS
+   ═══════════════════════════════════════════════════════════ */
+.section-label {
+    font-size: 1em; font-weight: 700;
+    color: var(--text-bright); margin: 40px 0 18px;
+    display: flex; align-items: center; gap: 10px;
+}
+.section-label::after {
+    content: ''; flex: 1; height: 1px;
+    background: var(--glass-border);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════════ */
+footer {
+    position: relative; z-index: 1;
+    text-align: center; padding: 40px 24px;
+    background: rgba(13,18,37,0.7);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--glass-border);
+}
+footer p { font-size: 0.85em; color: var(--text-muted); margin: 4px 0; }
+footer strong { color: var(--text-bright); }
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+    .topbar-brand span { display: none; }
+    .tab-btn { padding: 14px 10px; font-size: 0.78em; }
+    .sol-hero { flex-direction: column; align-items: flex-start; }
+    .hero { padding: 60px 20px 50px; }
+}
+@media (max-width: 600px) {
+    .tiles-grid, .flip-grid {
+        grid-template-columns: 1fr;
+    }
+    .flip-card { height: 360px; }
+    main { padding: 0 16px 60px; }
+    .topbar { padding: 0 12px; }
+}
+
+/* SVG sprite hide */
+.svg-sprites { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+/* ═══════════════════════════════════════════════════════════
+   SCROLLBAR
+   ═══════════════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+    </style>
+</head>
+
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SVG ICON SPRITES
+     ═══════════════════════════════════════════════════════════ -->
+<svg class="svg-sprites" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <!-- Presentation / Slides -->
+        <symbol id="ico-slides" viewBox="0 0 48 48">
+            <rect x="4" y="6" width="40" height="30" rx="3" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <rect x="8" y="10" width="16" height="10" rx="1.5" opacity="0.5"/>
+            <line x1="28" y1="12" x2="40" y2="12" stroke="currentColor" stroke-width="2" opacity="0.4"/>
+            <line x1="28" y1="17" x2="36" y2="17" stroke="currentColor" stroke-width="2" opacity="0.4"/>
+            <line x1="8" y1="24" x2="40" y2="24" stroke="currentColor" stroke-width="2" opacity="0.3"/>
+            <line x1="8" y1="29" x2="30" y2="29" stroke="currentColor" stroke-width="2" opacity="0.3"/>
+            <line x1="24" y1="36" x2="24" y2="42" stroke="currentColor" stroke-width="2.5"/>
+            <line x1="16" y1="42" x2="32" y2="42" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        </symbol>
+        <!-- Dashboard / Chart -->
+        <symbol id="ico-dashboard" viewBox="0 0 48 48">
+            <rect x="4" y="26" width="8" height="16" rx="2"/>
+            <rect x="15" y="18" width="8" height="24" rx="2"/>
+            <rect x="26" y="10" width="8" height="32" rx="2"/>
+            <rect x="37" y="4" width="8" height="38" rx="2"/>
+            <rect x="2" y="44" width="44" height="2" rx="1"/>
+        </symbol>
+        <!-- Key / RBAC -->
+        <symbol id="ico-key" viewBox="0 0 48 48">
+            <circle cx="32" cy="16" r="10" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <circle cx="32" cy="16" r="4"/>
+            <line x1="24" y1="22" x2="8" y2="38" stroke="currentColor" stroke-width="2.5"/>
+            <line x1="8" y1="38" x2="14" y2="38" stroke="currentColor" stroke-width="2.5"/>
+            <line x1="14" y1="32" x2="14" y2="38" stroke="currentColor" stroke-width="2.5"/>
+            <line x1="18" y1="30" x2="18" y2="35" stroke="currentColor" stroke-width="2.5"/>
+        </symbol>
+        <!-- Lock / Security -->
+        <symbol id="ico-lock" viewBox="0 0 48 48">
+            <rect x="10" y="22" width="28" height="22" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <path d="M16 22 V16 A8 8 0 0 1 32 16 V22" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <circle cx="24" cy="33" r="3"/>
+            <line x1="24" y1="36" x2="24" y2="39" stroke="currentColor" stroke-width="2.5"/>
+        </symbol>
+        <!-- Gate / Gateway -->
+        <symbol id="ico-gateway" viewBox="0 0 48 48">
+            <path d="M8 42 V16 A16 16 0 0 1 40 16 V42" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <line x1="8" y1="42" x2="40" y2="42" stroke="currentColor" stroke-width="2.5"/>
+            <line x1="24" y1="24" x2="24" y2="42" stroke="currentColor" stroke-width="2"/>
+            <circle cx="24" cy="20" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+            <line x1="14" y1="28" x2="14" y2="42" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="34" y1="28" x2="34" y2="42" stroke="currentColor" stroke-width="1.5"/>
+        </symbol>
+        <!-- Warning / Risk -->
+        <symbol id="ico-risk" viewBox="0 0 48 48">
+            <path d="M24 6 L44 42 H4 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+            <line x1="24" y1="18" x2="24" y2="30" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="24" cy="36" r="2"/>
+        </symbol>
+        <!-- Sparkle / Copilot -->
+        <symbol id="ico-sparkle" viewBox="0 0 48 48">
+            <path d="M24 4 L27 18 L42 20 L28 26 L32 42 L24 30 L16 42 L20 26 L6 20 L21 18 Z"/>
+        </symbol>
+        <!-- Clock / Logs -->
+        <symbol id="ico-clock" viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <polyline points="24,12 24,24 32,28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        </symbol>
+        <!-- Flow / Lifecycle -->
+        <symbol id="ico-flow" viewBox="0 0 48 48">
+            <circle cx="10" cy="14" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="38" cy="14" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="24" cy="38" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M15 18 L20 33" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M33 18 L28 33" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M16 14 H32" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="10" cy="14" r="2.5"/><circle cx="38" cy="14" r="2.5"/><circle cx="24" cy="38" r="2.5"/>
+        </symbol>
+        <!-- Network / Globe -->
+        <symbol id="ico-network" viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="2"/>
+            <ellipse cx="24" cy="24" rx="10" ry="20" fill="none" stroke="currentColor" stroke-width="2"/>
+            <line x1="4" y1="24" x2="44" y2="24" stroke="currentColor" stroke-width="2"/>
+            <path d="M8 14 H40 M8 34 H40" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        </symbol>
+        <!-- Label / Tag -->
+        <symbol id="ico-label" viewBox="0 0 48 48">
+            <path d="M6 8 H28 L42 24 L28 40 H6 Z" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <circle cx="16" cy="24" r="3"/>
+        </symbol>
+        <!-- Filter / DLP -->
+        <symbol id="ico-filter" viewBox="0 0 48 48">
+            <path d="M6 8 H42 L28 26 V38 L20 42 V26 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+        </symbol>
+        <!-- Link / Docs -->
+        <symbol id="ico-docs" viewBox="0 0 48 48">
+            <rect x="6" y="6" width="22" height="30" rx="2" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <rect x="20" y="12" width="22" height="30" rx="2" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <line x1="12" y1="14" x2="22" y2="14" stroke="currentColor" stroke-width="2"/>
+            <line x1="12" y1="20" x2="22" y2="20" stroke="currentColor" stroke-width="2"/>
+            <line x1="12" y1="26" x2="18" y2="26" stroke="currentColor" stroke-width="2"/>
+        </symbol>
+        <!-- Crown / PIM -->
+        <symbol id="ico-crown" viewBox="0 0 48 48">
+            <path d="M8 36 L4 16 L16 24 L24 8 L32 24 L44 16 L40 36 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+            <rect x="8" y="36" width="32" height="6" rx="2" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <circle cx="24" cy="12" r="2"/><circle cx="8" cy="18" r="2"/><circle cx="40" cy="18" r="2"/>
+        </symbol>
+        <!-- Folder / Collections -->
+        <symbol id="ico-folder" viewBox="0 0 48 48">
+            <path d="M4 14 L4 40 C4 42 6 44 8 44 H40 C42 44 44 42 44 40 V18 C44 16 42 14 40 14 H24 L20 8 H8 C6 8 4 10 4 12 Z" fill="none" stroke="currentColor" stroke-width="2.5"/>
+        </symbol>
+        <!-- Magnifier / Discovery -->
+        <symbol id="ico-search" viewBox="0 0 48 48">
+            <circle cx="22" cy="22" r="14" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <line x1="32" y1="32" x2="42" y2="42" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        </symbol>
+        <!-- Clipboard / Audit -->
+        <symbol id="ico-audit" viewBox="0 0 48 48">
+            <rect x="8" y="8" width="32" height="36" rx="3" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <rect x="18" y="4" width="12" height="8" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+            <line x1="16" y1="20" x2="32" y2="20" stroke="currentColor" stroke-width="2"/>
+            <line x1="16" y1="27" x2="32" y2="27" stroke="currentColor" stroke-width="2"/>
+            <line x1="16" y1="34" x2="26" y2="34" stroke="currentColor" stroke-width="2"/>
+        </symbol>
+        <!-- Scale / Regulatory -->
+        <symbol id="ico-scale" viewBox="0 0 48 48">
+            <line x1="24" y1="6" x2="24" y2="40" stroke="currentColor" stroke-width="2.5"/>
+            <line x1="8" y1="14" x2="40" y2="14" stroke="currentColor" stroke-width="2.5"/>
+            <path d="M8 14 L4 28 A8 4 0 0 0 12 28 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M40 14 L36 28 A8 4 0 0 0 44 28 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+            <rect x="16" y="40" width="16" height="4" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+        </symbol>
+        <!-- Map / Data Map -->
+        <symbol id="ico-map" viewBox="0 0 48 48">
+            <path d="M6 10 L18 6 L30 10 L42 6 V38 L30 42 L18 38 L6 42 Z" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <line x1="18" y1="6" x2="18" y2="38" stroke="currentColor" stroke-width="2"/>
+            <line x1="30" y1="10" x2="30" y2="42" stroke="currentColor" stroke-width="2"/>
+        </symbol>
+        <!-- Gear / Admin -->
+        <symbol id="ico-gear" viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="8" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <path d="M24 2 L27 10 L36 6 L32 15 L42 14 L38 22 L46 24 L38 26 L42 34 L32 33 L36 42 L27 38 L24 46 L21 38 L12 42 L16 33 L6 34 L10 26 L2 24 L10 22 L6 14 L16 15 L12 6 L21 10 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+        </symbol>
+    </defs>
+</svg>
+
+<!-- ═══════════════════════════════════════════════════════════
+     AMBIENT BACKGROUND
+     ═══════════════════════════════════════════════════════════ -->
+<div class="ambient" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+</div>
+
+<!-- Skip nav -->
+<a href="#main-content" class="skip-link">Skip to content</a>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TOP NAVIGATION
+     ═══════════════════════════════════════════════════════════ -->
+<nav class="topbar" aria-label="Main navigation">
+    <div class="topbar-brand">
+        <img src="icons/MicrosoftSecurity.png" alt="Microsoft Security Logo" height="44">
+        <span>AI Security &amp; Governance</span>
+    </div>
+    <div class="tab-nav" role="tablist" aria-label="Solution sections">
+        <button class="tab-btn" role="tab" aria-selected="true"  data-tab="overview"     id="tab-overview"     aria-controls="panel-overview">Overview</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="dashboard"    id="tab-dashboard"    aria-controls="panel-dashboard">Dashboard</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="agent365"     id="tab-agent365"     aria-controls="panel-agent365">Agent 365</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="entra"        id="tab-entra"        aria-controls="panel-entra">Entra &amp; RBAC</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="defenderxdr"  id="tab-defenderxdr"  aria-controls="panel-defenderxdr">Defender XDR</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="defendercloud" id="tab-defendercloud" aria-controls="panel-defendercloud">Defender Cloud</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="purview"      id="tab-purview"      aria-controls="panel-purview">Purview</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="foundry"      id="tab-foundry"      aria-controls="panel-foundry">Foundry Control Plane</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="policies"     id="tab-policies"     aria-controls="panel-policies">Azure Policies</button>
+    </div>
+    <div class="topbar-actions">
+        <button id="fullscreenBtn" class="btn-icon" aria-label="Toggle fullscreen" title="Fullscreen">⛶</button>
+    </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════
+     HERO
+     ═══════════════════════════════════════════════════════════ -->
+<header class="hero">
+    <h1>Microsoft AI Security &amp; Governance</h1>
+    <p>End-to-End Security, Governance, and Protection for AI Agents — Enterprise Portfolio</p>
+    <div class="hero-banner">
+        <img src="icons/AISecurity.png" alt="AI Security Overview">
+    </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════
+     MAIN CONTENT
+     ═══════════════════════════════════════════════════════════ -->
+<main id="main-content">
+
+<!-- ╔═══════════════════════════════════════════════════════════╗
+     ║  OVERVIEW TAB                                            ║
+     ╚═══════════════════════════════════════════════════════════╝ -->
+<div class="tab-panel active" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">
+    <!-- Two-Column: AI Security Overview (left) + Customer Adoption Overview (right) -->
+    <div class="overview-split">
+        <!-- Left: AI Security Overview -->
+        <div class="overview-section">
+            <div class="section-label">AI Security Overview</div>
+            <div class="slide-carousel" data-deck="overview">
+                <div class="carousel-toolbar">
+                    <span class="carousel-counter" id="counter-overview"></span>
+                    <button class="btn-reset-deck" data-reset="overview" aria-label="Go to first slide" title="Go to first slide">⏮ First</button>
+                    <button class="btn-fullscreen-deck" data-fullscreen="overview" aria-label="Fullscreen" title="Fullscreen">⛶ Fullscreen</button>
+                </div>
+                <div class="carousel-frame" id="deck-overview">
+                    <div class="carousel-placeholder">
+                        <svg><use href="#ico-slides"></use></svg>
+                        <p>No slides available</p>
+                        <span class="carousel-hint">Export your PowerPoint as images into<br><code>slides/overview/</code> folder (Slide1.PNG, Slide2.PNG, ...)</span>
+                    </div>
+                    <button class="carousel-prev" data-deck="overview" aria-label="Previous slide">&#8249;</button>
+                    <button class="carousel-next" data-deck="overview" aria-label="Next slide">&#8250;</button>
+                    <span class="carousel-fs-counter" id="fs-counter-overview"></span>
+                    <span class="carousel-fs-hint">ESC to exit &middot; ← → to navigate</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Customer Adoption Overview -->
+        <div class="overview-section">
+            <div class="section-label">Customer Adoption Overview</div>
+            <div class="adoption-summary" id="adoptionSummary">
+                <div class="summary-card sc-in-use">
+                    <div class="sc-value" id="sumInUse">0</div>
+                    <div class="sc-label">In Use</div>
+                </div>
+                <div class="summary-card sc-not-use">
+                    <div class="sc-value" id="sumNotUse">8</div>
+                    <div class="sc-label">Not In Use</div>
+                </div>
+                <div class="summary-card sc-maturity">
+                    <div class="sc-value" id="sumAvgMat">—</div>
+                    <div class="sc-label">Avg. Maturity</div>
+                </div>
+                <div class="summary-card sc-score">
+                    <div class="sc-value" id="sumScore">0%</div>
+                    <div class="sc-label">Adoption Score</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Risk Heat Map -->
+    <div class="risk-heatmap-section">
+        <div class="risk-heatmap-header">
+            <div class="section-label">AI Agent Threat Risk Matrix</div>
+            <div class="risk-mode-toggle" id="riskModeToggle">
+                <button class="risk-mode-btn" data-mode="m365">M365 Agents</button>
+                <button class="risk-mode-btn active" data-mode="foundry">Azure Foundry</button>
+                <button class="risk-mode-btn" data-mode="hybrid">Hybrid</button>
+            </div>
+            <div class="risk-summary-badges">
+                <span class="risk-badge covered" id="riskCovered">🛡️ 0 threats covered</span>
+                <span class="risk-badge gaps" id="riskGaps">⚠️ 0 gaps</span>
+            </div>
+        </div>
+        <div class="risk-heatmap-wrap">
+            <table class="risk-heatmap" id="riskHeatmap">
+                <thead id="riskHeatmapHead">
+                    <tr><th>Threat Type</th></tr>
+                </thead>
+                <tbody id="riskHeatmapBody"></tbody>
+            </table>
+        </div>
+    </div>
+    <div id="riskPopover" class="risk-detail-popover"></div>
+
+    <div class="section-label">Explore Solutions</div>
+    <div class="tiles-grid">
+
+        <div class="solution-tile" tabindex="0" role="button" data-navigate="dashboard" data-sol="dashboard" aria-label="Go to AI Security Dashboard">
+            <div class="tile-icon"><svg><use href="#ico-dashboard"></use></svg></div>
+            <h3>AI Security Dashboard</h3>
+            <p>Central CISO dashboard providing full visibility into AI risks, security status, and cross-organizational controls</p>
+            <div class="tile-controls" onclick="event.stopPropagation()">
+                <div class="toggle-row">
+                    <span class="toggle-label">Status</span>
+                    <label class="toggle-switch"><input type="checkbox" data-toggle="dashboard" aria-label="Toggle AI Dashboard in use"><span class="toggle-track"></span></label>
+                    <span class="toggle-status off">Not in use</span>
+                </div>
+                <div class="maturity-row">
+                    <span class="maturity-label">Adoption Maturity</span>
+                    <div class="maturity-bar" data-maturity="dashboard">
+                        <button class="maturity-seg" data-level="0" aria-label="New">New</button>
+                        <button class="maturity-seg" data-level="1" aria-label="Exploring">Exploring</button>
+                        <button class="maturity-seg" data-level="2" aria-label="Adopting">Adopting</button>
+                        <button class="maturity-seg" data-level="3" aria-label="Mature">Mature</button>
+                    </div>
+                </div>
+            </div>
+            <span class="tile-arrow">Explore →</span>
+        </div>
+
+        <div class="solution-tile" tabindex="0" role="button" data-navigate="agent365" data-sol="agent365" aria-label="Go to Agent 365">
+            <div class="tile-icon"><img src="icons/Agent365.svg" alt="Agent 365"></div>
+            <h3>Agent 365</h3>
+            <p>Control plane for AI Agents — registration, access control, threat protection, and observability</p>
+            <div class="tile-controls" onclick="event.stopPropagation()">
+                <div class="toggle-row">
+                    <span class="toggle-label">Status</span>
+                    <label class="toggle-switch"><input type="checkbox" data-toggle="agent365" aria-label="Toggle Agent 365 in use"><span class="toggle-track"></span></label>
+                    <span class="toggle-status off">Not in use</span>
+                </div>
+                <div class="maturity-row">
+                    <span class="maturity-label">Adoption Maturity</span>
+                    <div class="maturity-bar" data-maturity="agent365">
+                        <button class="maturity-seg" data-level="0" aria-label="New">New</button>
+                        <button class="maturity-seg" data-level="1" aria-label="Exploring">Exploring</button>
+                        <button class="maturity-seg" data-level="2" aria-label="Adopting">Adopting</button>
+                        <button class="maturity-seg" data-level="3" aria-label="Mature">Mature</button>
+                    </div>
+                </div>
+            </div>
+            <span class="tile-arrow">Explore →</span>
+        </div>
+
+        <div class="solution-tile" tabindex="0" role="button" data-navigate="entra" data-sol="entra" aria-label="Go to Entra and RBAC">
+            <div class="tile-icon"><img src="icons/Entra.svg" alt="Entra"></div>
+            <h3>Entra Agent ID &amp; RBAC</h3>
+            <p>Unique identity for each AI Agent — Conditional Access, lifecycle governance, sign-in logs, and risk detection</p>
+            <div class="tile-controls" onclick="event.stopPropagation()">
+                <div class="toggle-row">
+                    <span class="toggle-label">Status</span>
+                    <label class="toggle-switch"><input type="checkbox" data-toggle="entra" aria-label="Toggle Entra in use"><span class="toggle-track"></span></label>
+                    <span class="toggle-status off">Not in use</span>
+                </div>
+                <div class="maturity-row">
+                    <span class="maturity-label">Adoption Maturity</span>
+                    <div class="maturity-bar" data-maturity="entra">
+                        <button class="maturity-seg" data-level="0" aria-label="New">New</button>
+                        <button class="maturity-seg" data-level="1" aria-label="Exploring">Exploring</button>
+                        <button class="maturity-seg" data-level="2" aria-label="Adopting">Adopting</button>
+                        <button class="maturity-seg" data-level="3" aria-label="Mature">Mature</button>
+                    </div>
+                </div>
+            </div>
+            <span class="tile-arrow">Explore →</span>
+        </div>
+
+        <div class="solution-tile" tabindex="0" role="button" data-navigate="defenderxdr" data-sol="defenderxdr" aria-label="Go to Defender XDR">
+            <div class="tile-icon"><img src="icons/Defender.svg" alt="Defender"></div>
+            <h3>Defender XDR</h3>
+            <p>AI Agent protection — automatic discovery, audit monitoring, advanced hunting, and runtime blocking</p>
+            <div class="tile-controls" onclick="event.stopPropagation()">
+                <div class="toggle-row">
+                    <span class="toggle-label">Status</span>
+                    <label class="toggle-switch"><input type="checkbox" data-toggle="defenderxdr" aria-label="Toggle Defender XDR in use"><span class="toggle-track"></span></label>
+                    <span class="toggle-status off">Not in use</span>
+                </div>
+                <div class="maturity-row">
+                    <span class="maturity-label">Adoption Maturity</span>
+                    <div class="maturity-bar" data-maturity="defenderxdr">
+                        <button class="maturity-seg" data-level="0" aria-label="New">New</button>
+                        <button class="maturity-seg" data-level="1" aria-label="Exploring">Exploring</button>
+                        <button class="maturity-seg" data-level="2" aria-label="Adopting">Adopting</button>
+                        <button class="maturity-seg" data-level="3" aria-label="Mature">Mature</button>
+                    </div>
+                </div>
+            </div>
+            <span class="tile-arrow">Explore →</span>
+        </div>
+
+        <div class="solution-tile" tabindex="0" role="button" data-navigate="defendercloud" data-sol="defendercloud" aria-label="Go to Defender for Cloud">
+            <div class="tile-icon"><img src="icons/Defender.svg" alt="Defender for Cloud"></div>
+            <h3>Defender for Cloud</h3>
+            <p>AI security posture management — discovery, attack path analysis, runtime protection, and content safety</p>
+            <div class="tile-controls" onclick="event.stopPropagation()">
+                <div class="toggle-row">
+                    <span class="toggle-label">Status</span>
+                    <label class="toggle-switch"><input type="checkbox" data-toggle="defendercloud" aria-label="Toggle Defender for Cloud in use"><span class="toggle-track"></span></label>
+                    <span class="toggle-status off">Not in use</span>
+                </div>
+                <div class="maturity-row">
+                    <span class="maturity-label">Adoption Maturity</span>
+                    <div class="maturity-bar" data-maturity="defendercloud">
+                        <button class="maturity-seg" data-level="0" aria-label="New">New</button>
+                        <button class="maturity-seg" data-level="1" aria-label="Exploring">Exploring</button>
+                        <button class="maturity-seg" data-level="2" aria-label="Adopting">Adopting</button>
+                        <button class="maturity-seg" data-level="3" aria-label="Mature">Mature</button>
+                    </div>
+                </div>
+            </div>
+            <span class="tile-arrow">Explore →</span>
+        </div>
+
+        <div class="solution-tile" tabindex="0" role="button" data-navigate="purview" data-sol="purview" aria-label="Go to Purview">
+            <div class="tile-icon"><img src="icons/Purview.svg" alt="Purview"></div>
+            <h3>Microsoft Purview</h3>
+            <p>Compliance and AI observability — data security, DLP, regulatory assessments, insider risk, and audit</p>
+            <div class="tile-controls" onclick="event.stopPropagation()">
+                <div class="toggle-row">
+                    <span class="toggle-label">Status</span>
+                    <label class="toggle-switch"><input type="checkbox" data-toggle="purview" aria-label="Toggle Purview in use"><span class="toggle-track"></span></label>
+                    <span class="toggle-status off">Not in use</span>
+                </div>
+                <div class="maturity-row">
+                    <span class="maturity-label">Adoption Maturity</span>
+                    <div class="maturity-bar" data-maturity="purview">
+                        <button class="maturity-seg" data-level="0" aria-label="New">New</button>
+                        <button class="maturity-seg" data-level="1" aria-label="Exploring">Exploring</button>
+                        <button class="maturity-seg" data-level="2" aria-label="Adopting">Adopting</button>
+                        <button class="maturity-seg" data-level="3" aria-label="Mature">Mature</button>
+                    </div>
+                </div>
+            </div>
+            <span class="tile-arrow">Explore →</span>
+        </div>
+
+        <div class="solution-tile" tabindex="0" role="button" data-navigate="foundry" data-sol="foundry" aria-label="Go to Foundry Control Plane">
+            <div class="tile-icon"><img src="icons/Foundry.svg" alt="Foundry Control Plane"></div>
+            <h3>Foundry Control Plane</h3>
+            <p>Built-in protection &amp; governance — policies, guardrails, AI gateway, encryption, and network security</p>
+            <div class="tile-controls" onclick="event.stopPropagation()">
+                <div class="toggle-row">
+                    <span class="toggle-label">Status</span>
+                    <label class="toggle-switch"><input type="checkbox" data-toggle="foundry" aria-label="Toggle Foundry Control Plane in use"><span class="toggle-track"></span></label>
+                    <span class="toggle-status off">Not in use</span>
+                </div>
+                <div class="maturity-row">
+                    <span class="maturity-label">Adoption Maturity</span>
+                    <div class="maturity-bar" data-maturity="foundry">
+                        <button class="maturity-seg" data-level="0" aria-label="New">New</button>
+                        <button class="maturity-seg" data-level="1" aria-label="Exploring">Exploring</button>
+                        <button class="maturity-seg" data-level="2" aria-label="Adopting">Adopting</button>
+                        <button class="maturity-seg" data-level="3" aria-label="Mature">Mature</button>
+                    </div>
+                </div>
+            </div>
+            <span class="tile-arrow">Explore →</span>
+        </div>
+
+        <div class="solution-tile" tabindex="0" role="button" data-navigate="policies" data-sol="policies" aria-label="Go to Azure Policies">
+            <div class="tile-icon"><img src="icons/azure.svg" alt="Azure Policies"></div>
+            <h3>Azure Policies</h3>
+            <p>Policy enforcement for Microsoft Foundry — model deployment policies and compliance controls</p>
+            <div class="tile-controls" onclick="event.stopPropagation()">
+                <div class="toggle-row">
+                    <span class="toggle-label">Status</span>
+                    <label class="toggle-switch"><input type="checkbox" data-toggle="policies" aria-label="Toggle Azure Policies in use"><span class="toggle-track"></span></label>
+                    <span class="toggle-status off">Not in use</span>
+                </div>
+                <div class="maturity-row">
+                    <span class="maturity-label">Adoption Maturity</span>
+                    <div class="maturity-bar" data-maturity="policies">
+                        <button class="maturity-seg" data-level="0" aria-label="New">New</button>
+                        <button class="maturity-seg" data-level="1" aria-label="Exploring">Exploring</button>
+                        <button class="maturity-seg" data-level="2" aria-label="Adopting">Adopting</button>
+                        <button class="maturity-seg" data-level="3" aria-label="Mature">Mature</button>
+                    </div>
+                </div>
+            </div>
+            <span class="tile-arrow">Explore →</span>
+        </div>
+    </div>
+</div>
+
+<!-- ╔═══════════════════════════════════════════════════════════╗
+     ║  DASHBOARD TAB                                           ║
+     ╚═══════════════════════════════════════════════════════════╝ -->
+<div class="tab-panel" id="panel-dashboard" role="tabpanel" aria-labelledby="tab-dashboard">
+    <div class="sol-hero">
+        <div class="sol-hero-icon"><svg><use href="#ico-dashboard"></use></svg></div>
+        <div>
+            <h2>AI Dashboard</h2>
+            <p class="overview-text">A central command center for the CISO, providing full visibility into AI risks, security posture, and cross-organizational controls for all AI Agents and enterprise applications. Monitor threats, assess compliance status, and enforce governance from a single pane of glass.</p>
+        </div>
+    </div>
+    <div class="cap-bar">
+        <span class="cap-tag">Risk Visibility</span>
+        <span class="cap-tag">Security Status</span>
+        <span class="cap-tag">Cross-Org Controls</span>
+        <span class="cap-tag">CISO Reporting</span>
+    </div>
+    <div class="flip-grid">
+        <div class="flip-card" tabindex="0" role="button" aria-label="AI Security Dashboard — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-dashboard"></use></svg></div>
+                    <h3>AI Security Dashboard</h3>
+                    <p class="card-subtitle">Full visibility into AI risks, security status, and controls for all AI Agents</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>AI Security Dashboard</h4>
+                    <p>A central dashboard for the CISO providing full visibility into AI risks, security status, and cross-organizational controls for all AI Agents and enterprise applications. View real-time threat indicators, compliance scores, and remediation actions across your entire AI estate.</p>
+                    <div class="card-links">
+                        <a class="btn btn-primary" href="https://ai.sip.security.microsoft.com/" target="_blank" rel="noopener noreferrer">Go to Dashboard ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide Carousel -->
+    <div class="slide-carousel" data-deck="dashboard">
+        <div class="carousel-toolbar">
+            <div class="section-label">Presentation Slides</div>
+            <span class="carousel-counter" id="counter-dashboard"></span>
+            <button class="btn-reset-deck" data-reset="dashboard" aria-label="Go to first slide" title="Go to first slide">⏮ First</button>
+            <button class="btn-fullscreen-deck" data-fullscreen="dashboard" aria-label="Fullscreen" title="Fullscreen">⛶ Fullscreen</button>
+        </div>
+        <div class="carousel-frame" id="deck-dashboard">
+            <div class="carousel-placeholder">
+                <svg><use href="#ico-slides"></use></svg>
+                <p>No slides available</p>
+                <span class="carousel-hint">Export your PowerPoint as images into<br><code>slides/dashboard/</code> folder (Slide1.PNG, Slide2.PNG, ...)</span>
+            </div>
+            <button class="carousel-prev" data-deck="dashboard" aria-label="Previous slide">&#8249;</button>
+            <button class="carousel-next" data-deck="dashboard" aria-label="Next slide">&#8250;</button>
+            <span class="carousel-fs-counter" id="fs-counter-dashboard"></span>
+            <span class="carousel-fs-hint">ESC to exit &middot; ← → to navigate</span>
+        </div>
+    </div>
+</div>
+
+<!-- ╔═══════════════════════════════════════════════════════════╗
+     ║  AGENT 365 TAB                                           ║
+     ╚═══════════════════════════════════════════════════════════╝ -->
+<div class="tab-panel" id="panel-agent365" role="tabpanel" aria-labelledby="tab-agent365">
+    <div class="sol-hero">
+        <div class="sol-hero-icon"><img src="icons/Agent365.svg" alt="Agent 365"></div>
+        <div>
+            <h2>Agent 365 — Control Plane for AI Agents</h2>
+            <p class="overview-text">A unified control plane for managing, governing, securing, and monitoring all AI Agents across the organization. From central registration through threat protection to business-impact analytics, Agent 365 gives IT and security teams full lifecycle control.</p>
+        </div>
+    </div>
+    <div class="cap-bar">
+        <span class="cap-tag">Agent Registry</span>
+        <span class="cap-tag">Access Control</span>
+        <span class="cap-tag">Threat Protection</span>
+        <span class="cap-tag">DLP Enforcement</span>
+        <span class="cap-tag">ROI Tracking</span>
+    </div>
+    <div class="flip-grid">
+        <div class="flip-card" tabindex="0" role="button" aria-label="Agent Registry — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-folder"></use></svg></div>
+                    <h3>Agent Registry</h3>
+                    <p class="card-subtitle">Central registration of all Agents in the organization</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Agent Registry</h4>
+                    <p>Central registration of all Agents in the organization via the Microsoft Admin Center. Maintain a complete inventory of every AI Agent, its owner, permissions, and lifecycle status in a single registry with full auditability.</p>
+                    <div class="card-links">
+                        <a class="btn btn-primary" href="https://www.microsoft.com/en-us/microsoft-agent-365" target="_blank" rel="noopener noreferrer">Microsoft Agent 365 ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Access Control and Governance — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-lock"></use></svg></div>
+                    <h3>Access Control &amp; Governance</h3>
+                    <p class="card-subtitle">Approve or block Agents; enforce Purview and DLP policies</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Access Control &amp; Governance</h4>
+                    <p>Approve or block Agents, define access to applications, data, and users, and enforce Microsoft Purview and DLP policies. Ensure every Agent operates within tightly defined boundaries with automated policy enforcement.</p>
+                    <div class="card-links">
+                        <a class="btn btn-glass" href="https://admin.cloud.microsoft" target="_blank" rel="noopener noreferrer">Admin Center ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Security and Threat Protection — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><img src="icons/Defender.svg" alt="Defender"></div>
+                    <h3>Security &amp; Threat Protection</h3>
+                    <p class="card-subtitle">Prompt Injection detection, Data Exfiltration prevention</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Security &amp; Threat Protection</h4>
+                    <p>Identify Prompt Injection attacks, prevent Data Exfiltration, and monitor for unusual Agent behavior. Real-time threat detection combined with automated response to protect your AI assets against sophisticated attacks.</p>
+                    <div class="card-links">
+                        <a class="btn btn-glass" href="https://admin.cloud.microsoft" target="_blank" rel="noopener noreferrer">Admin Center ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Observability and ROI — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-dashboard"></use></svg></div>
+                    <h3>Observability &amp; ROI</h3>
+                    <p class="card-subtitle">Real-time dashboards: usage, performance, quality, business impact</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Observability &amp; ROI</h4>
+                    <p>Real-time Dashboards tracking Usage, Performance, Quality, hours saved, and business impact. Quantify the return on your AI investment and demonstrate value to stakeholders with comprehensive analytics.</p>
+                    <div class="card-links">
+                        <a class="btn btn-glass" href="https://admin.cloud.microsoft" target="_blank" rel="noopener noreferrer">Admin Center ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="resources-section">
+        <h3>Documentation &amp; Resources</h3>
+        <div class="resource-grid">
+            <a class="resource-link" href="https://www.microsoft.com/en-us/microsoft-agent-365" target="_blank" rel="noopener noreferrer">
+                <svg><use href="#ico-docs"></use></svg>
+                <span>Microsoft Agent 365 Product Page</span>
+            </a>
+            <a class="resource-link" href="https://admin.cloud.microsoft" target="_blank" rel="noopener noreferrer">
+                <svg><use href="#ico-gear"></use></svg>
+                <span>Microsoft Admin Center</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Slide Carousel -->
+    <div class="slide-carousel" data-deck="agent365">
+        <div class="carousel-toolbar">
+            <div class="section-label">Presentation Slides</div>
+            <span class="carousel-counter" id="counter-agent365"></span>
+            <button class="btn-reset-deck" data-reset="agent365" aria-label="Go to first slide" title="Go to first slide">⏮ First</button>
+            <button class="btn-fullscreen-deck" data-fullscreen="agent365" aria-label="Fullscreen" title="Fullscreen">⛶ Fullscreen</button>
+        </div>
+        <div class="carousel-frame" id="deck-agent365">
+            <div class="carousel-placeholder">
+                <svg><use href="#ico-slides"></use></svg>
+                <p>No slides available</p>
+                <span class="carousel-hint">Export your PowerPoint as images into<br><code>slides/agent365/</code> folder (Slide1.PNG, Slide2.PNG, ...)</span>
+            </div>
+            <button class="carousel-prev" data-deck="agent365" aria-label="Previous slide">&#8249;</button>
+            <button class="carousel-next" data-deck="agent365" aria-label="Next slide">&#8250;</button>
+            <span class="carousel-fs-counter" id="fs-counter-agent365"></span>
+            <span class="carousel-fs-hint">ESC to exit &middot; ← → to navigate</span>
+        </div>
+    </div>
+</div>
+
+<!-- ╔═══════════════════════════════════════════════════════════╗
+     ║  ENTRA & RBAC TAB                                        ║
+     ╚═══════════════════════════════════════════════════════════╝ -->
+<div class="tab-panel" id="panel-entra" role="tabpanel" aria-labelledby="tab-entra">
+    <div class="sol-hero">
+        <div class="sol-hero-icon"><img src="icons/Entra.svg" alt="Entra"></div>
+        <div>
+            <h2>Microsoft Entra Agent ID &amp; Azure RBAC</h2>
+            <p class="overview-text">Comprehensive identity and access management purpose-built for AI Agents. Assign unique identities, enforce conditional access, manage lifecycle workflows, and apply fine-grained RBAC permissions — giving every Agent the minimum access it needs with full audit traceability.</p>
+        </div>
+    </div>
+    <div class="cap-bar">
+        <span class="cap-tag">Agent Identity</span>
+        <span class="cap-tag">Conditional Access</span>
+        <span class="cap-tag">RBAC</span>
+        <span class="cap-tag">Lifecycle Governance</span>
+        <span class="cap-tag">Risk Detection</span>
+        <span class="cap-tag">Privileged Access</span>
+    </div>
+    <div class="flip-grid">
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Conditional Access Policy for Agent ID — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><img src="icons/Entra.svg" alt="Entra"></div>
+                    <h3>Conditional Access for Agent ID</h3>
+                    <p class="card-subtitle">Unique identity for each Agent with Conditional Access and Lifecycle Governance</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Conditional Access Policy</h4>
+                    <p>Unique identity for each Agent, including Conditional Access and Lifecycle Governance. Define policies that control when, where, and how Agents can access resources based on conditions such as risk level, location, and compliance status.</p>
+                    <div class="card-links">
+                        <a class="btn btn-primary" href="https://learn.microsoft.com/en-us/entra/identity/conditional-access/agent-id?tabs=custom-security-attributes" target="_blank" rel="noopener noreferrer">Learn More ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Agent Registry — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-folder"></use></svg></div>
+                    <h3>Agent Registry</h3>
+                    <p class="card-subtitle">Central AI Registry for management, governance, and control</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Agent Registry</h4>
+                    <p>Central AI Registry for management, governance, and control of all Agent identities. Register, discover, and manage Agent identities across your organization with full visibility into permissions and activity.</p>
+                    <div class="card-links">
+                        <a class="btn btn-primary" href="https://learn.microsoft.com/en-us/entra/agent-id/identity-platform/what-is-agent-registry" target="_blank" rel="noopener noreferrer">About Registry ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Azure RBAC — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-key"></use></svg></div>
+                    <h3>Azure RBAC</h3>
+                    <p class="card-subtitle">Fine-grained permission control for Foundry and AI Agents</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Azure RBAC for Foundry</h4>
+                    <p>Azure RBAC for fine-grained permission control for Foundry and AI Agents. Assign roles at the right scope — from individual models to entire projects — ensuring least-privilege access across your AI infrastructure.</p>
+                    <div class="card-links">
+                        <a class="btn btn-primary" href="https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/rbac-foundry?view=foundry" target="_blank" rel="noopener noreferrer">RBAC for Foundry ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Agent Collections — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-folder"></use></svg></div>
+                    <h3>Agent Collections</h3>
+                    <p class="card-subtitle">Group Agents by system or project for organized management</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Agent Collections</h4>
+                    <p>Grouping Agents by system or project for streamlined management, governance, and bulk policy application across related Agent workloads.</p>
+                    <div class="card-links">
+                        <a class="btn btn-primary" href="https://learn.microsoft.com/en-us/entra/agent-id/identity-platform/agent-registry-collections" target="_blank" rel="noopener noreferrer">About Collections ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Sign-in Logs — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-clock"></use></svg></div>
+                    <h3>Sign-in Logs</h3>
+                    <p class="card-subtitle">Track and analyze activities associated with AI Agent identities</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Sign-in &amp; Audit Logs</h4>
+                    <p>Ability to track and analyze activities associated with AI Agent identities using Audit and Sign-in logs in Microsoft Entra ID. Gain full traceability into Agent authentication events, access patterns, and potential anomalies.</p>
+                    <div class="card-links">
+                        <a class="btn btn-primary" href="https://learn.microsoft.com/en-us/entra/agent-id/identity-professional/sign-in-audit-logs-agents" target="_blank" rel="noopener noreferrer">Sign-in Logs ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Identity Protection for Agents — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-risk"></use></svg></div>
+                    <h3>Identity Protection</h3>
+                    <p class="card-subtitle">Advanced protection against risks and threats — Risky Agents</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Identity Protection for Agents</h4>
+                    <p>Advanced protection for Agent identities against risks and threats by flagging Risky Agents. Automatically detect compromised or suspicious Agent identities and enforce remediation policies before damage occurs.</p>
+                    <div class="card-links">
+                        <a class="btn btn-primary" href="https://learn.microsoft.com/en-us/entra/id-protection/concept-risky-agents" target="_blank" rel="noopener noreferrer">Risky Agents ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Privileged Identity Management — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-crown"></use></svg></div>
+                    <h3>Privileged Identity Management</h3>
+                    <p class="card-subtitle">3 dedicated Admin roles for Agent management</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Privileged Identity Management</h4>
+                    <p>Addition of 3 new Admin roles for Agent management:<br><br>• <strong>Agent ID Administrator</strong><br>• <strong>Agent ID Developer</strong><br>• <strong>Agent Registry Administrator</strong><br><br>Manage privileged access to Agent operations with just-in-time activation and approval workflows.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Lifecycle Workflow — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-flow"></use></svg></div>
+                    <h3>Lifecycle &amp; Access Reviews</h3>
+                    <p class="card-subtitle">Lifecycle management for Agents</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Lifecycle Workflow &amp; Access Reviews</h4>
+                    <p>Lifecycle management for Agents — automate provisioning, access reviews, and decommissioning workflows. Ensure no Agent retains access beyond its intended lifecycle.</p>
+                    <div class="card-links">
+                        <span class="cap-tag" style="font-size:0.75em;">Coming Soon</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="resources-section">
+        <h3>Documentation &amp; Resources</h3>
+        <div class="resource-grid">
+            <a class="resource-link" href="https://learn.microsoft.com/en-us/entra/identity/conditional-access/agent-id?tabs=custom-security-attributes" target="_blank" rel="noopener noreferrer">
+                <svg><use href="#ico-docs"></use></svg><span>Conditional Access for Agent ID</span>
+            </a>
+            <a class="resource-link" href="https://learn.microsoft.com/en-us/entra/agent-id/identity-platform/what-is-agent-registry" target="_blank" rel="noopener noreferrer">
+                <svg><use href="#ico-docs"></use></svg><span>About Agent Registry</span>
+            </a>
+            <a class="resource-link" href="https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/rbac-foundry?view=foundry" target="_blank" rel="noopener noreferrer">
+                <svg><use href="#ico-docs"></use></svg><span>Azure RBAC for Foundry</span>
+            </a>
+            <a class="resource-link" href="https://learn.microsoft.com/en-us/entra/agent-id/identity-platform/agent-registry-collections" target="_blank" rel="noopener noreferrer">
+                <svg><use href="#ico-docs"></use></svg><span>Agent Collections</span>
+            </a>
+            <a class="resource-link" href="https://learn.microsoft.com/en-us/entra/agent-id/identity-professional/sign-in-audit-logs-agents" target="_blank" rel="noopener noreferrer">
+                <svg><use href="#ico-docs"></use></svg><span>Sign-in &amp; Audit Logs</span>
+            </a>
+            <a class="resource-link" href="https://learn.microsoft.com/en-us/entra/id-protection/concept-risky-agents" target="_blank" rel="noopener noreferrer">
+                <svg><use href="#ico-docs"></use></svg><span>Risky Agents — Identity Protection</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Slide Carousel -->
+    <div class="slide-carousel" data-deck="entra">
+        <div class="carousel-toolbar">
+            <div class="section-label">Presentation Slides</div>
+            <span class="carousel-counter" id="counter-entra"></span>
+            <button class="btn-reset-deck" data-reset="entra" aria-label="Go to first slide" title="Go to first slide">⏮ First</button>
+            <button class="btn-fullscreen-deck" data-fullscreen="entra" aria-label="Fullscreen" title="Fullscreen">⛶ Fullscreen</button>
+        </div>
+        <div class="carousel-frame" id="deck-entra">
+            <div class="carousel-placeholder">
+                <svg><use href="#ico-slides"></use></svg>
+                <p>No slides available</p>
+                <span class="carousel-hint">Export your PowerPoint as images into<br><code>slides/entra/</code> folder (Slide1.PNG, Slide2.PNG, ...)</span>
+            </div>
+            <button class="carousel-prev" data-deck="entra" aria-label="Previous slide">&#8249;</button>
+            <button class="carousel-next" data-deck="entra" aria-label="Next slide">&#8250;</button>
+            <span class="carousel-fs-counter" id="fs-counter-entra"></span>
+            <span class="carousel-fs-hint">ESC to exit &middot; ← → to navigate</span>
+        </div>
+    </div>
+</div>
+
+<!-- ╔═══════════════════════════════════════════════════════════╗
+     ║  DEFENDER XDR TAB                                        ║
+     ╚═══════════════════════════════════════════════════════════╝ -->
+<div class="tab-panel" id="panel-defenderxdr" role="tabpanel" aria-labelledby="tab-defenderxdr">
+    <div class="sol-hero">
+        <div class="sol-hero-icon"><img src="icons/Defender.svg" alt="Defender"></div>
+        <div>
+            <h2>Microsoft Defender XDR — AI Agent Protection</h2>
+            <p class="overview-text">Extended detection and response for AI Agents across Copilot Studio and Azure AI Foundry. Automatically discover all Agents, collect audit logs, detect anomalous behavior, and block dangerous actions at runtime — with full Alert integration into the Microsoft XDR security operations platform.</p>
+        </div>
+    </div>
+    <div class="cap-bar">
+        <span class="cap-tag">Discovery</span>
+        <span class="cap-tag">Audit Logs</span>
+        <span class="cap-tag">Advanced Hunting</span>
+        <span class="cap-tag">Runtime Blocking</span>
+        <span class="cap-tag">Attack Path Analysis</span>
+    </div>
+    <div class="flip-grid">
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Discovery and Inventory — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-search"></use></svg></div>
+                    <h3>Discovery &amp; Inventory</h3>
+                    <p class="card-subtitle">Automatic identification of all AI Agents</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Discovery &amp; Inventory</h4>
+                    <p>Automatic identification of all AI Agents created in Microsoft Copilot Studio and Azure AI Foundry. Maintain a continuously updated inventory without manual agent registration.</p>
+                    <div class="card-links">
+                        <a class="btn btn-glass" href="https://learn.microsoft.com/en-us/defender-xdr/ai-agent-inventory?tabs=azure-ai-foundry#ai-agent-protection-features" target="_blank" rel="noopener noreferrer">Learn More ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Audit Monitoring and Alerts — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-audit"></use></svg></div>
+                    <h3>Audit, Monitoring &amp; Alerts</h3>
+                    <p class="card-subtitle">Continuous monitoring of anomalous activity and threats</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Audit, Monitoring &amp; Alerts</h4>
+                    <p>Collection of Audit Logs, continuous monitoring of anomalous activity, and real-time threat detection for all AI Agents. Correlate events across agents and users for comprehensive threat detection.</p>
+                    <div class="card-links">
+                        <a class="btn btn-glass" href="https://learn.microsoft.com/en-us/defender-xdr/ai-agent-inventory?tabs=azure-ai-foundry#ai-agent-protection-features" target="_blank" rel="noopener noreferrer">Learn More ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Copilot Studio Agents — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-sparkle"></use></svg></div>
+                    <h3>Copilot Studio Agents</h3>
+                    <p class="card-subtitle">Advanced Hunting, runtime blocking, XDR alerts integration</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Copilot Studio Agents</h4>
+                    <p>Full integration with Advanced Hunting, blocking dangerous actions at runtime, and alerts within Microsoft XDR. Hunt for suspicious patterns across all Copilot Studio agents using KQL queries and automated response playbooks.</p>
+                    <div class="card-links">
+                        <a class="btn btn-glass" href="https://learn.microsoft.com/en-us/defender-xdr/ai-agent-inventory?tabs=azure-ai-foundry#ai-agent-protection-features" target="_blank" rel="noopener noreferrer">Learn More ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Azure AI Foundry Agents — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><img src="icons/Foundry.svg" alt="Foundry"></div>
+                    <h3>Azure AI Foundry Agents</h3>
+                    <p class="card-subtitle">Misconfiguration detection, attack path analysis, remediation</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Azure AI Foundry Agents</h4>
+                    <p>Detection of misconfigurations, security vulnerabilities, Attack Path Analysis, and remediation recommendations. Proactively identify and fix security gaps before they can be exploited.</p>
+                    <div class="card-links">
+                        <a class="btn btn-glass" href="https://learn.microsoft.com/en-us/defender-xdr/ai-agent-inventory?tabs=azure-ai-foundry#ai-agent-protection-features" target="_blank" rel="noopener noreferrer">Learn More ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="resources-section">
+        <h3>Documentation &amp; Resources</h3>
+        <div class="resource-grid">
+            <a class="resource-link" href="https://learn.microsoft.com/en-us/defender-xdr/ai-agent-inventory?tabs=azure-ai-foundry#ai-agent-protection-features" target="_blank" rel="noopener noreferrer">
+                <svg><use href="#ico-docs"></use></svg><span>AI Agent Protection Features — Defender XDR</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Slide Carousel -->
+    <div class="slide-carousel" data-deck="defenderxdr">
+        <div class="carousel-toolbar">
+            <div class="section-label">Presentation Slides</div>
+            <span class="carousel-counter" id="counter-defenderxdr"></span>
+            <button class="btn-reset-deck" data-reset="defenderxdr" aria-label="Go to first slide" title="Go to first slide">⏮ First</button>
+            <button class="btn-fullscreen-deck" data-fullscreen="defenderxdr" aria-label="Fullscreen" title="Fullscreen">⛶ Fullscreen</button>
+        </div>
+        <div class="carousel-frame" id="deck-defenderxdr">
+            <div class="carousel-placeholder">
+                <svg><use href="#ico-slides"></use></svg>
+                <p>No slides available</p>
+                <span class="carousel-hint">Export your PowerPoint as images into<br><code>slides/defenderxdr/</code> folder (Slide1.PNG, Slide2.PNG, ...)</span>
+            </div>
+            <button class="carousel-prev" data-deck="defenderxdr" aria-label="Previous slide">&#8249;</button>
+            <button class="carousel-next" data-deck="defenderxdr" aria-label="Next slide">&#8250;</button>
+            <span class="carousel-fs-counter" id="fs-counter-defenderxdr"></span>
+            <span class="carousel-fs-hint">ESC to exit &middot; ← → to navigate</span>
+        </div>
+    </div>
+</div>
+
+<!-- ╔═══════════════════════════════════════════════════════════╗
+     ║  DEFENDER FOR CLOUD TAB                                  ║
+     ╚═══════════════════════════════════════════════════════════╝ -->
+<div class="tab-panel" id="panel-defendercloud" role="tabpanel" aria-labelledby="tab-defendercloud">
+    <div class="sol-hero">
+        <div class="sol-hero-icon"><img src="icons/Defender.svg" alt="Defender for Cloud"></div>
+        <div>
+            <h2>Microsoft Defender for Cloud — AI &amp; CSPM</h2>
+            <p class="overview-text">Unified AI security posture management with discovery of AI apps and agents, attack path analysis, runtime protection against prompt injection and data exposure, and Azure AI Content Safety integration — all enriched by Microsoft Threat Intelligence.</p>
+        </div>
+    </div>
+    <div class="cap-bar">
+        <span class="cap-tag">AI Discovery</span>
+        <span class="cap-tag">Posture Management</span>
+        <span class="cap-tag">Runtime Protection</span>
+        <span class="cap-tag">Content Safety</span>
+        <span class="cap-tag">Threat Intelligence</span>
+    </div>
+    <div class="flip-grid">
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Discovery — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-search"></use></svg></div>
+                    <h3>Discovery</h3>
+                    <p class="card-subtitle">Discover AI Apps and Agents with unified posture management</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>AI Discovery</h4>
+                    <p>Discovery of AI Apps and AI Agents with Unified AI Security Posture Management. Automatically map your AI estate across cloud environments with a complete view of all AI workloads and their security state.</p>
+                    <div class="card-links">
+                        <a class="btn btn-glass" href="https://learn.microsoft.com/en-us/azure/defender-for-cloud/ai-security-posture#discover-ai-agents-preview" target="_blank" rel="noopener noreferrer">Learn More ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Posture — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><img src="icons/azure.svg" alt="Azure Policies"></div>
+                    <h3>Posture</h3>
+                    <p class="card-subtitle">Recommendations and Attack Path Analysis for Foundry Agents</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Security Posture</h4>
+                    <p>Posture Recommendations and Attack Path Analysis dedicated to Foundry Agents. Identify exposed attack surfaces, prioritize remediation with severity scoring, and visualize potential attack chains targeting your AI workloads.</p>
+                    <div class="card-links">
+                        <a class="btn btn-glass" href="https://learn.microsoft.com/en-us/azure/defender-for-cloud/ai-security-posture#discover-ai-agents-preview" target="_blank" rel="noopener noreferrer">Learn More ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Runtime Protection — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><img src="icons/Defender.svg" alt="Defender"></div>
+                    <h3>Runtime Protection</h3>
+                    <p class="card-subtitle">Prompt Injection detection, data exposure alerts, threat intel</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Runtime Protection</h4>
+                    <p>Detection of Prompt Injection, sensitive data exposure, and malicious tool usage — enriched by Microsoft Threat Intelligence. Block attacks in real-time to protect both your models and your data.</p>
+                    <div class="card-links">
+                        <a class="btn btn-glass" href="https://learn.microsoft.com/en-us/azure/defender-for-cloud/ai-security-posture#discover-ai-agents-preview" target="_blank" rel="noopener noreferrer">Learn More ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Content Safety — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-filter"></use></svg></div>
+                    <h3>Content Safety</h3>
+                    <p class="card-subtitle">Azure AI Content Safety blocks harmful content and attacks</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Content Safety</h4>
+                    <p>Azure AI Content Safety automatically blocks harmful content and prompt-based attacks. Multi-layer content filtering ensures AI outputs meet safety standards and organizational policies.</p>
+                    <div class="card-links">
+                        <a class="btn btn-glass" href="https://learn.microsoft.com/en-us/azure/defender-for-cloud/ai-security-posture#discover-ai-agents-preview" target="_blank" rel="noopener noreferrer">Learn More ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="resources-section">
+        <h3>Documentation &amp; Resources</h3>
+        <div class="resource-grid">
+            <a class="resource-link" href="https://learn.microsoft.com/en-us/azure/defender-for-cloud/ai-security-posture#discover-ai-agents-preview" target="_blank" rel="noopener noreferrer">
+                <svg><use href="#ico-docs"></use></svg><span>Defender for Cloud — AI Security Posture</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Slide Carousel -->
+    <div class="slide-carousel" data-deck="defendercloud">
+        <div class="carousel-toolbar">
+            <div class="section-label">Presentation Slides</div>
+            <span class="carousel-counter" id="counter-defendercloud"></span>
+            <button class="btn-reset-deck" data-reset="defendercloud" aria-label="Go to first slide" title="Go to first slide">⏮ First</button>
+            <button class="btn-fullscreen-deck" data-fullscreen="defendercloud" aria-label="Fullscreen" title="Fullscreen">⛶ Fullscreen</button>
+        </div>
+        <div class="carousel-frame" id="deck-defendercloud">
+            <div class="carousel-placeholder">
+                <svg><use href="#ico-slides"></use></svg>
+                <p>No slides available</p>
+                <span class="carousel-hint">Export your PowerPoint as images into<br><code>slides/defendercloud/</code> folder (Slide1.PNG, Slide2.PNG, ...)</span>
+            </div>
+            <button class="carousel-prev" data-deck="defendercloud" aria-label="Previous slide">&#8249;</button>
+            <button class="carousel-next" data-deck="defendercloud" aria-label="Next slide">&#8250;</button>
+            <span class="carousel-fs-counter" id="fs-counter-defendercloud"></span>
+            <span class="carousel-fs-hint">ESC to exit &middot; ← → to navigate</span>
+        </div>
+    </div>
+</div>
+
+<!-- ╔═══════════════════════════════════════════════════════════╗
+     ║  PURVIEW TAB                                             ║
+     ╚═══════════════════════════════════════════════════════════╝ -->
+<div class="tab-panel" id="panel-purview" role="tabpanel" aria-labelledby="tab-purview">
+    <div class="sol-hero">
+        <div class="sol-hero-icon"><img src="icons/Purview.svg" alt="Purview"></div>
+        <div>
+            <h2>Microsoft Purview — Compliance &amp; AI Observability</h2>
+            <p class="overview-text">Comprehensive data security, compliance, and governance for AI workloads. Discover and classify sensitive data flowing to AI models, enforce DLP policies, run regulatory assessments, manage retention, and detect insider risks — with full audit traceability across the AI lifecycle.</p>
+        </div>
+    </div>
+    <div class="cap-bar">
+        <span class="cap-tag">DSPM for AI</span>
+        <span class="cap-tag">Sensitivity Labels</span>
+        <span class="cap-tag">DLP</span>
+        <span class="cap-tag">Regulatory Assessment</span>
+        <span class="cap-tag">Compliance Manager</span>
+        <span class="cap-tag">Insider Risk</span>
+    </div>
+    <div class="flip-grid">
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="DSPM for AI — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><img src="icons/Purview.svg" alt="Purview"></div>
+                    <h3>DSPM for AI</h3>
+                    <p class="card-subtitle">Discover and map sensitive data used by models and Agents</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>DSPM for AI</h4>
+                    <span class="card-path">Solutions → DSPM → AI Observability</span>
+                    <p>Discover and map sensitive data used by models and Agents to identify exposures and leakage risks. Provides visibility into AI data flows and enables enforcement of controls to protect corporate information.</p>
+                    <div class="card-links">
+                        <a class="btn btn-glass" href="https://learn.microsoft.com/en-us/purview/ai-agent-365" target="_blank" rel="noopener noreferrer">Learn More ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Information Protection — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-label"></use></svg></div>
+                    <h3>Information Protection</h3>
+                    <p class="card-subtitle">Classify, label, and encrypt sensitive information</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Information Protection (Sensitivity Labels)</h4>
+                    <p>Classify, label, and encrypt sensitive information before use by models and Agents to prevent unauthorized exposure. Enforce data access and usage policies throughout their lifecycle, including AI flows.</p>
+                    <div class="card-links">
+                        <a class="btn btn-glass" href="https://learn.microsoft.com/en-us/purview/ai-agent-365" target="_blank" rel="noopener noreferrer">Learn More ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Data Loss Prevention — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-filter"></use></svg></div>
+                    <h3>Data Loss Prevention</h3>
+                    <p class="card-subtitle">Detect and block transfers of sensitive data to Prompts or tools</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>DLP for AI</h4>
+                    <p>Detect and block the transfer of sensitive information to Prompts, Agents, or external tools. Reduces data leakage risks and controls data movement between AI systems and unauthorized parties.</p>
+                    <div class="card-links">
+                        <a class="btn btn-glass" href="https://learn.microsoft.com/en-us/purview/ai-agent-365" target="_blank" rel="noopener noreferrer">Learn More ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="AI Foundry Regulatory Assessment — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-scale"></use></svg></div>
+                    <h3>Regulatory Assessment</h3>
+                    <p class="card-subtitle">Built-in assessments for AI Foundry against key regulations</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>AI Foundry Regulatory Assessment</h4>
+                    <span class="card-path">Solutions → Compliance → Assessments</span>
+                    <p>Run built-in assessments for AI Foundry and AI Agents against key regulations and frameworks, including Gap Analysis and recommendations for closing compliance gaps.</p>
+                    <div class="card-links">
+                        <a class="btn btn-glass" href="https://learn.microsoft.com/en-us/purview/ai-agent-365" target="_blank" rel="noopener noreferrer">Learn More ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Compliance Manager — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><img src="icons/azure.svg" alt="Azure Policies"></div>
+                    <h3>Compliance Manager</h3>
+                    <p class="card-subtitle">Map AI usage to regulatory requirements</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Compliance Manager</h4>
+                    <span class="card-path">Solutions → Compliance Manager → Regulations</span>
+                    <p>Map AI usage to regulatory requirements and measure organizational compliance status against standards and laws. Identify compliance gaps and guide remediation actions to reduce regulatory risks.</p>
+                    <div class="card-links">
+                        <a class="btn btn-glass" href="https://learn.microsoft.com/en-us/purview/ai-agent-365" target="_blank" rel="noopener noreferrer">Learn More ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Retention Policies — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-clock"></use></svg></div>
+                    <h3>Retention Policies</h3>
+                    <p class="card-subtitle">Define how long AI interaction data is retained</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Retention Policies</h4>
+                    <p>Define how long interaction data with models and Agents is retained according to organizational policy. Reduce legal exposure and control information lifecycle with automated retention and deletion rules.</p>
+                    <div class="card-links">
+                        <a class="btn btn-glass" href="https://learn.microsoft.com/en-us/purview/ai-agent-365" target="_blank" rel="noopener noreferrer">Learn More ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Data Map and Lineage — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-map"></use></svg></div>
+                    <h3>Data Map &amp; Lineage</h3>
+                    <p class="card-subtitle">Map data sources and flow to models and Agents</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Data Map &amp; Lineage</h4>
+                    <span class="card-path">Solutions → Data Catalog</span>
+                    <p>Map data sources and their flow to models and Agents for full visibility. Perform Impact Analysis to understand how changes or exposures in data affect AI systems.</p>
+                    <div class="card-links">
+                        <a class="btn btn-glass" href="https://learn.microsoft.com/en-us/purview/ai-agent-365" target="_blank" rel="noopener noreferrer">Learn More ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Audit Unified Audit Log — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-audit"></use></svg></div>
+                    <h3>Audit (Unified Log)</h3>
+                    <p class="card-subtitle">Document activities and interactions with AI systems</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Audit (Unified Audit Log)</h4>
+                    <p>Document activities and interactions with AI systems for investigation and control purposes. Provides full traceability and supports Audit and Forensics processes across your entire AI estate.</p>
+                    <div class="card-links">
+                        <a class="btn btn-glass" href="https://learn.microsoft.com/en-us/purview/ai-agent-365" target="_blank" rel="noopener noreferrer">Learn More ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Insider Risk Management — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-risk"></use></svg></div>
+                    <h3>Insider Risk Management</h3>
+                    <p class="card-subtitle">Identify unusual or risky AI usage by internal users</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Insider Risk Management</h4>
+                    <span class="card-path">Solutions → Insider Risk Management → Policies → Agent Policies</span>
+                    <p>Identify unusual or risky AI usage patterns by internal users. Mitigate leakage risks and malicious use through early detection and rapid response with dedicated Agent monitoring policies.</p>
+                    <div class="card-links">
+                        <a class="btn btn-glass" href="https://learn.microsoft.com/en-us/purview/ai-agent-365" target="_blank" rel="noopener noreferrer">Learn More ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="resources-section">
+        <h3>Documentation &amp; Resources</h3>
+        <div class="resource-grid">
+            <a class="resource-link" href="https://learn.microsoft.com/en-us/purview/ai-agent-365" target="_blank" rel="noopener noreferrer">
+                <svg><use href="#ico-docs"></use></svg><span>Microsoft Purview — AI Agent 365</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Slide Carousel -->
+    <div class="slide-carousel" data-deck="purview">
+        <div class="carousel-toolbar">
+            <div class="section-label">Presentation Slides</div>
+            <span class="carousel-counter" id="counter-purview"></span>
+            <button class="btn-reset-deck" data-reset="purview" aria-label="Go to first slide" title="Go to first slide">⏮ First</button>
+            <button class="btn-fullscreen-deck" data-fullscreen="purview" aria-label="Fullscreen" title="Fullscreen">⛶ Fullscreen</button>
+        </div>
+        <div class="carousel-frame" id="deck-purview">
+            <div class="carousel-placeholder">
+                <svg><use href="#ico-slides"></use></svg>
+                <p>No slides available</p>
+                <span class="carousel-hint">Export your PowerPoint as images into<br><code>slides/purview/</code> folder (Slide1.PNG, Slide2.PNG, ...)</span>
+            </div>
+            <button class="carousel-prev" data-deck="purview" aria-label="Previous slide">&#8249;</button>
+            <button class="carousel-next" data-deck="purview" aria-label="Next slide">&#8250;</button>
+            <span class="carousel-fs-counter" id="fs-counter-purview"></span>
+            <span class="carousel-fs-hint">ESC to exit &middot; ← → to navigate</span>
+        </div>
+    </div>
+</div>
+
+<!-- ╔═══════════════════════════════════════════════════════════╗
+     ║  FOUNDRY TAB                                             ║
+     ╚═══════════════════════════════════════════════════════════╝ -->
+<div class="tab-panel" id="panel-foundry" role="tabpanel" aria-labelledby="tab-foundry">
+    <div class="sol-hero">
+        <div class="sol-hero-icon"><img src="icons/Foundry.svg" alt="Foundry Control Plane"></div>
+        <div>
+            <h2>Foundry Control Plane — Built-in Protection &amp; Governance</h2>
+            <p class="overview-text">Native security and governance capabilities embedded directly within the Foundry platform. Define safety policies, enforce guardrails, monitor performance in real-time, and protect data with encryption and network isolation — providing defense-in-depth for every AI workload from build to production.</p>
+        </div>
+    </div>
+    <div class="cap-bar">
+        <span class="cap-tag">Policies</span>
+        <span class="cap-tag">Guardrails</span>
+        <span class="cap-tag">Observability</span>
+        <span class="cap-tag">AI Gateway</span>
+        <span class="cap-tag">Encryption</span>
+        <span class="cap-tag">Network Isolation</span>
+    </div>
+    <div class="flip-grid">
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Policies — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><img src="icons/azure.svg" alt="Azure Policies"></div>
+                    <h3>Policies</h3>
+                    <p class="card-subtitle">Define minimum safety controls using risk-based Guardrails</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Foundry Policies</h4>
+                    <p>Define and enforce minimum safety controls for models and Agents using Guardrails based on risk level. Set organizational baselines that all AI workloads must meet before deployment.</p>
+                    <div class="card-links">
+                        <a class="btn btn-primary" href="https://learn.microsoft.com/en-us/azure/ai-foundry/control-plane/how-to-manage-compliance-security?view=foundry" target="_blank" rel="noopener noreferrer">Manage Policies ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Guardrails — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-lock"></use></svg></div>
+                    <h3>Guardrails</h3>
+                    <p class="card-subtitle">End-to-end guardrail management with real-time monitoring</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Guardrails</h4>
+                    <p>Manage Guardrails end-to-end for models and Agents, including central visibility of controls, high-granularity configuration, and real-time monitoring to ensure compliance and identify gaps.</p>
+                    <div class="card-links">
+                        <a class="btn btn-primary" href="https://learn.microsoft.com/en-us/azure/ai-foundry/guardrails/how-to-create-guardrails?view=foundry&tabs=python" target="_blank" rel="noopener noreferrer">Create Guardrails ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Unified Observability — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><img src="icons/Purview.svg" alt="Purview"></div>
+                    <h3>Unified Observability</h3>
+                    <p class="card-subtitle">Monitor performance, security, and quality in real-time</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Unified Observability</h4>
+                    <p>Unified visibility across Agents, models, and tools to monitor performance, security, and quality in real-time. Correlate telemetry from across your AI stack into actionable insights.</p>
+                    <div class="card-links">
+                        <a class="btn btn-glass" href="https://ai.azure.com/" target="_blank" rel="noopener noreferrer">Foundry Portal ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Security Posture — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><img src="icons/Defender.svg" alt="Defender for Cloud"></div>
+                    <h3>Security Posture</h3>
+                    <p class="card-subtitle">Connect Purview and Defender for Cloud to Foundry</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Security Posture</h4>
+                    <p>Connect Microsoft Purview to Foundry for governance and compliance enforcement on apps and Agents, and receive automatic security recommendations from Defender for Cloud.</p>
+                    <div class="card-links">
+                        <a class="btn btn-glass" href="https://ai.azure.com/" target="_blank" rel="noopener noreferrer">Foundry Portal ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="AI Gateway — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-gateway"></use></svg></div>
+                    <h3>AI Gateway</h3>
+                    <p class="card-subtitle">APIM-based central control for model and Agent traffic</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>AI Gateway</h4>
+                    <p>Set up an AI Gateway based on Azure API Management for central control of model, tool, and Agent traffic, including policy enforcement, rate limiting, and activity monitoring.</p>
+                    <div class="card-links">
+                        <a class="btn btn-primary" href="https://learn.microsoft.com/en-us/azure/ai-foundry/configuration/enable-ai-api-management-gateway-portal?view=foundry" target="_blank" rel="noopener noreferrer">Enable AI Gateway ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Data Protection and Encryption — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-lock"></use></svg></div>
+                    <h3>Data Protection &amp; Encryption</h3>
+                    <p class="card-subtitle">Customer Managed Keys (CMK) for full data control</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Data Protection &amp; Encryption</h4>
+                    <p>Support for Customer Managed Keys (CMK) for data encryption and full customer control. Maintain sovereignty over your encryption keys while leveraging the Foundry platform at scale.</p>
+                    <div class="card-links">
+                        <a class="btn btn-primary" href="https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/encryption-keys-portal?view=foundry" target="_blank" rel="noopener noreferrer">CMK for Foundry ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Network Security — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-network"></use></svg></div>
+                    <h3>Network Security</h3>
+                    <p class="card-subtitle">Private Link and Network Isolation</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Network Security</h4>
+                    <p>Private Link and Network Isolation to minimize exposure to the public internet. Ensure all AI traffic flows through secure private endpoints with full network segmentation.</p>
+                    <div class="card-links">
+                        <a class="btn btn-primary" href="https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/configure-private-link?view=foundry" target="_blank" rel="noopener noreferrer">Configure Private Link ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="resources-section">
+        <h3>Documentation &amp; Resources</h3>
+        <div class="resource-grid">
+            <a class="resource-link" href="https://learn.microsoft.com/en-us/azure/ai-foundry/control-plane/how-to-manage-compliance-security?view=foundry" target="_blank" rel="noopener noreferrer">
+                <svg><use href="#ico-docs"></use></svg><span>Manage Compliance &amp; Security</span>
+            </a>
+            <a class="resource-link" href="https://learn.microsoft.com/en-us/azure/ai-foundry/guardrails/how-to-create-guardrails?view=foundry&tabs=python" target="_blank" rel="noopener noreferrer">
+                <svg><use href="#ico-docs"></use></svg><span>Create Guardrails</span>
+            </a>
+            <a class="resource-link" href="https://learn.microsoft.com/en-us/azure/ai-foundry/configuration/enable-ai-api-management-gateway-portal?view=foundry" target="_blank" rel="noopener noreferrer">
+                <svg><use href="#ico-docs"></use></svg><span>Enable AI Gateway</span>
+            </a>
+            <a class="resource-link" href="https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/encryption-keys-portal?view=foundry" target="_blank" rel="noopener noreferrer">
+                <svg><use href="#ico-docs"></use></svg><span>CMK Encryption</span>
+            </a>
+            <a class="resource-link" href="https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/configure-private-link?view=foundry" target="_blank" rel="noopener noreferrer">
+                <svg><use href="#ico-docs"></use></svg><span>Configure Private Link</span>
+            </a>
+            <a class="resource-link" href="https://ai.azure.com/" target="_blank" rel="noopener noreferrer">
+                <img src="icons/Foundry.svg" alt="Foundry"><span>Microsoft Foundry Portal</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Slide Carousel -->
+    <div class="slide-carousel" data-deck="foundry">
+        <div class="carousel-toolbar">
+            <div class="section-label">Presentation Slides</div>
+            <span class="carousel-counter" id="counter-foundry"></span>
+            <button class="btn-reset-deck" data-reset="foundry" aria-label="Go to first slide" title="Go to first slide">⏮ First</button>
+            <button class="btn-fullscreen-deck" data-fullscreen="foundry" aria-label="Fullscreen" title="Fullscreen">⛶ Fullscreen</button>
+        </div>
+        <div class="carousel-frame" id="deck-foundry">
+            <div class="carousel-placeholder">
+                <svg><use href="#ico-slides"></use></svg>
+                <p>No slides available</p>
+                <span class="carousel-hint">Export your PowerPoint as images into<br><code>slides/foundry/</code> folder (Slide1.PNG, Slide2.PNG, ...)</span>
+            </div>
+            <button class="carousel-prev" data-deck="foundry" aria-label="Previous slide">&#8249;</button>
+            <button class="carousel-next" data-deck="foundry" aria-label="Next slide">&#8250;</button>
+            <span class="carousel-fs-counter" id="fs-counter-foundry"></span>
+            <span class="carousel-fs-hint">ESC to exit &middot; ← → to navigate</span>
+        </div>
+    </div>
+</div>
+
+<!-- ╔═══════════════════════════════════════════════════════════╗
+     ║  AZURE POLICIES TAB                                      ║
+     ╚═══════════════════════════════════════════════════════════╝ -->
+<div class="tab-panel" id="panel-policies" role="tabpanel" aria-labelledby="tab-policies">
+    <div class="sol-hero">
+        <div class="sol-hero-icon"><img src="icons/azure.svg" alt="Azure Policies"></div>
+        <div>
+            <h2>Azure Policies for Microsoft Foundry</h2>
+            <p class="overview-text">Enforce organizational standards and compliance at scale using Azure Policy. Control model deployments, enforce security configurations, and ensure every Foundry resource meets your governance requirements — across both Classic and New Foundry architectures.</p>
+        </div>
+    </div>
+    <div class="cap-bar">
+        <span class="cap-tag">Azure Policy</span>
+        <span class="cap-tag">Model Deployment</span>
+        <span class="cap-tag">Deployment Policies</span>
+        <span class="cap-tag">Classic &amp; New Foundry</span>
+    </div>
+
+    <div class="section-label">Classic Foundry</div>
+    <div class="flip-grid">
+        <div class="flip-card" tabindex="0" role="button" aria-label="Azure Policy for Classic Foundry — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><img src="icons/azure.svg" alt="Azure Policies"></div>
+                    <h3>Azure Policy</h3>
+                    <p class="card-subtitle">Policy definitions and assignments for Classic Foundry</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Azure Policy — Classic Foundry</h4>
+                    <p>Define and assign Azure Policies to control configuration, security, and compliance of Classic Foundry resources across your subscriptions.</p>
+                    <div class="card-links">
+                        <a class="btn btn-primary" href="https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/azure-policy?view=foundry-classic" target="_blank" rel="noopener noreferrer">Azure Policy ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Model Deployment Classic — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><img src="icons/Foundry.svg" alt="Foundry"></div>
+                    <h3>Model Deployment</h3>
+                    <p class="card-subtitle">Built-in policies for model deployment in Classic Foundry</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Model Deployment — Classic</h4>
+                    <p>Apply built-in policies to control which models can be deployed, enforce approval workflows, and ensure deployment configurations meet security standards.</p>
+                    <div class="card-links">
+                        <a class="btn btn-primary" href="https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/built-in-policy-model-deployment?view=foundry-classic&tabs=portal" target="_blank" rel="noopener noreferrer">Model Deployment ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Deployment Policies Classic — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><svg><use href="#ico-lock"></use></svg></div>
+                    <h3>Deployment Policies</h3>
+                    <p class="card-subtitle">Configure deployment policies for Classic Foundry models</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Deployment Policies — Classic</h4>
+                    <p>Configure and enforce deployment policies to control model access, versioning, and rollout strategies for Classic Foundry deployments.</p>
+                    <div class="card-links">
+                        <a class="btn btn-primary" href="https://learn.microsoft.com/en-us/azure/ai-foundry/foundry-models/how-to/configure-deployment-policies?view=foundry-classic&tabs=models" target="_blank" rel="noopener noreferrer">Deployment Policies ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-label">New Foundry</div>
+    <div class="flip-grid">
+        <div class="flip-card" tabindex="0" role="button" aria-label="Policy Reference New Foundry — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><img src="icons/azure.svg" alt="Azure Policies"></div>
+                    <h3>Policy Reference</h3>
+                    <p class="card-subtitle">Complete policy reference for New Foundry architecture</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Policy Reference — New Foundry</h4>
+                    <p>Complete reference of all built-in Azure Policy definitions available for the New Foundry architecture, including security, compliance, and operational policies.</p>
+                    <div class="card-links">
+                        <a class="btn btn-primary" href="https://learn.microsoft.com/en-us/azure/ai-services/policy-reference?context=%2Fazure%2Fai-foundry%2Fcontext%2Fcontext&view=foundry" target="_blank" rel="noopener noreferrer">Policy Reference ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" tabindex="0" role="button" aria-label="Model Deployment Policy New Foundry — click to flip">
+            <div class="flip-card-inner">
+                <div class="flip-front">
+                    <div class="card-icon"><img src="icons/Foundry.svg" alt="Foundry"></div>
+                    <h3>Model Deployment Policy</h3>
+                    <p class="card-subtitle">Deployment policies for the New Foundry</p>
+                    <span class="flip-hint">Click to see details</span>
+                </div>
+                <div class="flip-back">
+                    <h4>Model Deployment Policy — New Foundry</h4>
+                    <p>Define and enforce model deployment policies for the New Foundry architecture using CLI or portal, controlling which models and configurations are allowed in production.</p>
+                    <div class="card-links">
+                        <a class="btn btn-primary" href="https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/model-deployment-policy?view=foundry&tabs=cli" target="_blank" rel="noopener noreferrer">Deployment Policy ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="resources-section">
+        <h3>Documentation &amp; Resources</h3>
+        <div class="resource-grid">
+            <a class="resource-link" href="https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/azure-policy?view=foundry-classic" target="_blank" rel="noopener noreferrer">
+                <svg><use href="#ico-docs"></use></svg><span>Azure Policy — Classic Foundry</span>
+            </a>
+            <a class="resource-link" href="https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/built-in-policy-model-deployment?view=foundry-classic&tabs=portal" target="_blank" rel="noopener noreferrer">
+                <svg><use href="#ico-docs"></use></svg><span>Built-in Policy — Model Deployment</span>
+            </a>
+            <a class="resource-link" href="https://learn.microsoft.com/en-us/azure/ai-foundry/foundry-models/how-to/configure-deployment-policies?view=foundry-classic&tabs=models" target="_blank" rel="noopener noreferrer">
+                <svg><use href="#ico-docs"></use></svg><span>Configure Deployment Policies</span>
+            </a>
+            <a class="resource-link" href="https://learn.microsoft.com/en-us/azure/ai-services/policy-reference?context=%2Fazure%2Fai-foundry%2Fcontext%2Fcontext&view=foundry" target="_blank" rel="noopener noreferrer">
+                <svg><use href="#ico-docs"></use></svg><span>Policy Reference — New Foundry</span>
+            </a>
+            <a class="resource-link" href="https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/model-deployment-policy?view=foundry&tabs=cli" target="_blank" rel="noopener noreferrer">
+                <svg><use href="#ico-docs"></use></svg><span>Model Deployment Policy — New Foundry</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Slide Carousel -->
+    <div class="slide-carousel" data-deck="policies">
+        <div class="carousel-toolbar">
+            <div class="section-label">Presentation Slides</div>
+            <span class="carousel-counter" id="counter-policies"></span>
+            <button class="btn-reset-deck" data-reset="policies" aria-label="Go to first slide" title="Go to first slide">⏮ First</button>
+            <button class="btn-fullscreen-deck" data-fullscreen="policies" aria-label="Fullscreen" title="Fullscreen">⛶ Fullscreen</button>
+        </div>
+        <div class="carousel-frame" id="deck-policies">
+            <div class="carousel-placeholder">
+                <svg><use href="#ico-slides"></use></svg>
+                <p>No slides available</p>
+                <span class="carousel-hint">Export your PowerPoint as images into<br><code>slides/policies/</code> folder (Slide1.PNG, Slide2.PNG, ...)</span>
+            </div>
+            <button class="carousel-prev" data-deck="policies" aria-label="Previous slide">&#8249;</button>
+            <button class="carousel-next" data-deck="policies" aria-label="Next slide">&#8250;</button>
+            <span class="carousel-fs-counter" id="fs-counter-policies"></span>
+            <span class="carousel-fs-hint">ESC to exit &middot; ← → to navigate</span>
+        </div>
+    </div>
+</div>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════════════════════ -->
+<footer>
+    <p><strong>AI Security &amp; Governance</strong></p>
+    <p>Enterprise &amp; CISO Presentation</p>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════════
+     JAVASCRIPT — TABS, FLIP CARDS, ANIMATIONS, FULLSCREEN
+     ═══════════════════════════════════════════════════════════ -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    /* ══════════════════════════════════════════════════════════
+       SLIDE CAROUSEL — AUTO-DETECT
+       ══════════════════════════════════════════════════════════
+       Just export your PowerPoint as PNG images into the
+       matching slides/<solution>/ folder. The carousel will
+       automatically detect Slide1.PNG, Slide2.PNG, ... etc.
+
+       Supported naming: Slide1.PNG (PowerPoint default export)
+       No code changes needed — just drop files and refresh!
+       ═══════════════════════════════════════════════════════════ */
+    const SLIDE_FOLDERS = {
+        overview:      'slides/overview/Security for AI EBC Presentation/',
+        dashboard:     'slides/dashboard/',
+        agent365:      'slides/agent365/',
+        entra:         'slides/entra/',
+        defenderxdr:   'slides/defenderxdr/',
+        defendercloud: 'slides/defendercloud/',
+        purview:       'slides/purview/',
+        foundry:       'slides/foundry/',
+        policies:      'slides/policies/'
+    };
+
+    /* ── Slide Carousel Controller ───────────────────────── */
+    const carouselState = {};
+    const loadedCarousels = new Set();
+
+    /* Probe for slides by trying to load Slide1.PNG, Slide2.PNG, ...
+       When an image fails, we know we've found all slides. */
+    function probeSlides(folder) {
+        return new Promise(resolve => {
+            const paths = [];
+            let idx = 1;
+            function tryNext() {
+                const img = new Image();
+                const path = folder + 'Slide' + idx + '.PNG';
+                img.onload = () => {
+                    paths.push(path);
+                    idx++;
+                    tryNext();
+                };
+                img.onerror = () => {
+                    if (paths.length === 0 && idx === 1) {
+                        /* Also try .png lowercase */
+                        const img2 = new Image();
+                        const path2 = folder + 'Slide1.png';
+                        img2.onload = () => { probeLowercase(folder, resolve); };
+                        img2.onerror = () => resolve(paths);
+                        img2.src = path2;
+                    } else {
+                        resolve(paths);
+                    }
+                };
+                img.src = path;
+            }
+            tryNext();
+        });
+    }
+
+    function probeLowercase(folder, resolve) {
+        const paths = [];
+        let idx = 1;
+        function tryNext() {
+            const img = new Image();
+            const path = folder + 'Slide' + idx + '.png';
+            img.onload = () => {
+                paths.push(path);
+                idx++;
+                tryNext();
+            };
+            img.onerror = () => resolve(paths);
+            img.src = path;
+        }
+        tryNext();
+    }
+
+    function buildCarousel(deckId, slides) {
+        const frame = document.getElementById('deck-' + deckId);
+        const counter = document.getElementById('counter-' + deckId);
+        const fsCounter = document.getElementById('fs-counter-' + deckId);
+        if (!frame) return;
+
+        carouselState[deckId] = { current: 0, total: slides.length, slides: slides };
+
+        /* Clear placeholder, keep nav buttons and overlays */
+        const placeholder = frame.querySelector('.carousel-placeholder');
+        if (placeholder) placeholder.remove();
+
+        /* Insert image */
+        const img = document.createElement('img');
+        img.className = 'carousel-img';
+        img.id = 'img-' + deckId;
+        img.src = slides[0];
+        img.alt = 'Slide 1 of ' + slides.length;
+        img.draggable = false;
+        frame.prepend(img);
+
+        /* Build dots after the frame (sliding window for large decks) */
+        const dotsDiv = document.createElement('div');
+        dotsDiv.className = 'carousel-dots';
+        dotsDiv.id = 'dots-' + deckId;
+        for (let i = 0; i < slides.length; i++) {
+            const dot = document.createElement('button');
+            dot.className = 'carousel-dot';
+            dot.dataset.deck = deckId;
+            dot.dataset.idx = i;
+            dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+            dotsDiv.appendChild(dot);
+        }
+        frame.parentElement.appendChild(dotsDiv);
+        updateSlidingDots(deckId, 0, slides.length);
+
+        if (counter) counter.textContent = '1 / ' + slides.length;
+        if (fsCounter) fsCounter.textContent = '1 / ' + slides.length;
+    }
+
+    async function initCarousel(deckId) {
+        if (loadedCarousels.has(deckId)) return;
+        const folder = SLIDE_FOLDERS[deckId];
+        if (!folder) return;
+
+        loadedCarousels.add(deckId);
+
+        const slides = await probeSlides(folder);
+        if (slides.length === 0) return;
+
+        buildCarousel(deckId, slides);
+    }
+
+    /* Sliding-window dot indicator — shows ~7 dots centered on
+       the active slide with scale fade for outer dots */
+    const DOT_WINDOW = 7;  // visible dots (odd for symmetry)
+    function updateSlidingDots(deckId, current, total) {
+        const container = document.getElementById('dots-' + deckId);
+        if (!container) return;
+        const dots = container.querySelectorAll('.carousel-dot');
+        if (dots.length === 0) return;
+
+        const half = Math.floor(DOT_WINDOW / 2);
+
+        // Calculate visible window center, clamped to edges
+        let center = current;
+        if (center < half) center = half;
+        if (center > total - 1 - half) center = total - 1 - half;
+        if (total <= DOT_WINDOW) center = Math.floor(total / 2);
+
+        const lo = total <= DOT_WINDOW ? 0 : center - half;
+        const hi = total <= DOT_WINDOW ? total - 1 : center + half;
+
+        dots.forEach((dot, i) => {
+            dot.classList.remove('active', 'near', 'far', 'hidden-dot');
+            if (i === current) {
+                dot.classList.add('active');
+            } else if (i >= lo && i <= hi) {
+                // Within visible window
+                const dist = Math.abs(i - current);
+                if (dist <= 1) dot.classList.add('near');
+                else if (dist <= 2) { /* normal size, no extra class */ }
+                else dot.classList.add('far');
+            } else {
+                dot.classList.add('hidden-dot');
+            }
+        });
+    }
+
+    function goToSlide(deckId, idx) {
+        const state = carouselState[deckId];
+        if (!state) return;
+        const slides = state.slides;
+
+        state.current = ((idx % state.total) + state.total) % state.total;
+
+        const img = document.getElementById('img-' + deckId);
+        const counter = document.getElementById('counter-' + deckId);
+        const fsCounter = document.getElementById('fs-counter-' + deckId);
+        if (img) {
+            img.style.opacity = '0';
+            setTimeout(() => {
+                img.src = slides[state.current];
+                img.alt = 'Slide ' + (state.current + 1) + ' of ' + state.total;
+                img.style.opacity = '1';
+            }, 200);
+        }
+        if (counter) counter.textContent = (state.current + 1) + ' / ' + state.total;
+        if (fsCounter) fsCounter.textContent = (state.current + 1) + ' / ' + state.total;
+
+        /* Update sliding dots */
+        updateSlidingDots(deckId, state.current, state.total);
+    }
+
+    function changeSlide(deckId, dir) {
+        const state = carouselState[deckId];
+        if (!state) return;
+        goToSlide(deckId, state.current + dir);
+    }
+
+    /* Bind carousel prev / next / reset buttons */
+    document.querySelectorAll('.carousel-prev').forEach(btn => {
+        btn.addEventListener('click', (e) => { e.stopPropagation(); changeSlide(btn.dataset.deck, -1); });
+    });
+    document.querySelectorAll('.carousel-next').forEach(btn => {
+        btn.addEventListener('click', (e) => { e.stopPropagation(); changeSlide(btn.dataset.deck, 1); });
+    });
+    document.querySelectorAll('.btn-reset-deck').forEach(btn => {
+        btn.addEventListener('click', (e) => { e.stopPropagation(); goToSlide(btn.dataset.reset, 0); });
+    });
+    /* Bind dot clicks (delegated) */
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('carousel-dot')) {
+            goToSlide(e.target.dataset.deck, parseInt(e.target.dataset.idx, 10));
+        }
+    });
+    /* Keyboard navigation — works both in normal and fullscreen mode */
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            /* If in fullscreen, find which deck is fullscreened */
+            const fsEl = document.fullscreenElement;
+            if (fsEl && fsEl.classList.contains('carousel-frame')) {
+                const deckId = fsEl.id.replace('deck-', '');
+                if (e.key === 'ArrowLeft') changeSlide(deckId, -1);
+                if (e.key === 'ArrowRight') changeSlide(deckId, 1);
+                e.preventDefault();
+                return;
+            }
+            /* Otherwise, check if a carousel is focused */
+            const focused = document.activeElement;
+            if (focused && focused.classList.contains('slide-carousel')) {
+                const dk = focused.dataset.deck;
+                if (e.key === 'ArrowLeft') changeSlide(dk, -1);
+                if (e.key === 'ArrowRight') changeSlide(dk, 1);
+                e.preventDefault();
+            }
+        }
+    });
+    /* Make carousels focusable */
+    document.querySelectorAll('.slide-carousel').forEach(carousel => {
+        carousel.setAttribute('tabindex', '0');
+    });
+
+    /* ── Tab Navigation ──────────────────────────────────── */
+    const tabs   = document.querySelectorAll('[role="tab"]');
+    const panels = document.querySelectorAll('[role="tabpanel"]');
+
+    function switchTab(tabId, pushHash) {
+        tabs.forEach(t => {
+            t.setAttribute('aria-selected', 'false');
+            t.classList.remove('active');
+        });
+        panels.forEach(p => {
+            p.classList.remove('active');
+        });
+
+        const targetTab   = document.querySelector(`[data-tab="${tabId}"]`);
+        const targetPanel = document.getElementById(`panel-${tabId}`);
+        if (!targetTab || !targetPanel) return;
+
+        targetTab.setAttribute('aria-selected', 'true');
+        targetTab.classList.add('active');
+        targetPanel.classList.add('active');
+
+        // Scroll tab into view in nav
+        targetTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
+        if (pushHash !== false) {
+            history.replaceState(null, '', `#${tabId}`);
+        }
+
+        // Animate cards entrance
+        animateCards(targetPanel);
+
+        // Lazy-load slide carousel
+        initCarousel(tabId);
+
+        // Scroll to main content
+        document.getElementById('main-content').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+
+        // Keyboard nav: arrow keys between tabs
+        tab.addEventListener('keydown', (e) => {
+            const tabArr = [...tabs];
+            const idx = tabArr.indexOf(tab);
+            let newIdx = -1;
+
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                newIdx = (idx + 1) % tabArr.length;
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                newIdx = (idx - 1 + tabArr.length) % tabArr.length;
+            } else if (e.key === 'Home') {
+                newIdx = 0;
+            } else if (e.key === 'End') {
+                newIdx = tabArr.length - 1;
+            }
+
+            if (newIdx >= 0) {
+                e.preventDefault();
+                tabArr[newIdx].focus();
+                switchTab(tabArr[newIdx].dataset.tab);
+            }
+        });
+    });
+
+    /* ── Solution Tiles → Tab Navigation ─────────────────── */
+    document.querySelectorAll('.solution-tile').forEach(tile => {
+        const target = tile.dataset.navigate;
+        tile.addEventListener('click', (e) => {
+            if (e.target.closest('.tile-controls')) return;
+            switchTab(target);
+        });
+        tile.addEventListener('keydown', (e) => {
+            if (e.target.closest('.tile-controls')) return;
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                switchTab(target);
+            }
+        });
+    });
+
+    /* ── Adoption Tracking — State & Persistence ─────────── */
+    const SOLUTIONS = ['dashboard','agent365','entra','defenderxdr','defendercloud','purview','foundry','policies'];
+    const MATURITY_LABELS = ['New','Exploring','Adopting','Mature'];
+    const STORAGE_KEY = 'msAiSecAdoption';
+
+    function loadState() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) return JSON.parse(raw);
+        } catch(e) {}
+        const def = {};
+        SOLUTIONS.forEach(s => { def[s] = { inUse: false, maturity: -1 }; });
+        return def;
+    }
+    function saveState(state) {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+    }
+
+    const adoptionState = loadState();
+
+    function renderAdoption() {
+        SOLUTIONS.forEach(sol => {
+            const s = adoptionState[sol];
+            const tile = document.querySelector('.solution-tile[data-sol="' + sol + '"]');
+            if (!tile) return;
+
+            const cb = tile.querySelector('input[data-toggle="' + sol + '"]');
+            const statusEl = tile.querySelector('.toggle-status');
+            if (cb) cb.checked = s.inUse;
+            if (statusEl) {
+                statusEl.textContent = s.inUse ? 'In use' : 'Not in use';
+                statusEl.className = 'toggle-status ' + (s.inUse ? 'on' : 'off');
+            }
+            tile.classList.toggle('in-use', s.inUse);
+
+            const bar = tile.querySelector('[data-maturity="' + sol + '"]');
+            if (bar) {
+                bar.className = 'maturity-bar' + (s.maturity >= 0 ? ' level-' + s.maturity : '');
+                bar.querySelectorAll('.maturity-seg').forEach(seg => {
+                    const lvl = parseInt(seg.dataset.level);
+                    seg.classList.toggle('active', lvl === s.maturity);
+                });
+            }
+        });
+        updateSummary();
+        updateRiskHeatmap();
+    }
+
+    function updateSummary() {
+        let inUse = 0, matSum = 0, matCount = 0;
+        SOLUTIONS.forEach(sol => {
+            const s = adoptionState[sol];
+            if (s.inUse) inUse++;
+            if (s.maturity >= 0) { matSum += s.maturity; matCount++; }
+        });
+        const notUse = SOLUTIONS.length - inUse;
+        const avgMat = matCount > 0 ? matSum / matCount : -1;
+        const useRatio = inUse / SOLUTIONS.length;
+        const matRatio = avgMat >= 0 ? avgMat / 3 : 0;
+        const score = Math.round(useRatio * 50 + matRatio * 50);
+
+        document.getElementById('sumInUse').textContent  = inUse;
+        document.getElementById('sumNotUse').textContent = notUse;
+        document.getElementById('sumAvgMat').textContent = avgMat >= 0 ? MATURITY_LABELS[Math.round(avgMat)] : '—';
+        document.getElementById('sumScore').textContent  = score + '%';
+    }
+
+    /* ════════ Risk Heat Map Engine ════════ */
+    const SOLUTION_NAMES = {
+        dashboard: 'AI Security Dashboard', agent365: 'Agent 365', entra: 'Entra',
+        defenderxdr: 'Defender XDR', defendercloud: 'Defender for Cloud',
+        purview: 'Purview', foundry: 'Foundry Control Plane', policies: 'Azure Policies'
+    };
+    const RISK_CLASS = { 'None':'risk-none','Low':'risk-low','Medium':'risk-medium','High':'risk-high','Very High':'risk-vhigh' };
+
+    const AGENT_MODES = {
+        m365: {
+            label: 'M365 Agents',
+            agentTypes: ['SharePoint Agent','Declarative Agent','Custom Engine Agent','Copilot Studio','Teams AI Agent','M365 Plugin','Power Automate','BizChat Agent'],
+            threats: [
+                { threat: 'Prompt Injection',         levels: ['Low','Medium','Medium','Medium','Medium','Low','Low','Medium'],
+                  solutions: ['agent365','purview','defendercloud'] },
+                { threat: 'Command Execution',        levels: ['None','Low','Medium','Low','Low','None','Medium','None'],
+                  solutions: ['agent365','defenderxdr','entra','policies'] },
+                { threat: 'Data Leakage',             levels: ['Medium','Medium','High','Medium','Medium','Low','Medium','High'],
+                  solutions: ['agent365','purview','defendercloud'] },
+                { threat: 'Identity Impersonation',   levels: ['Low','Low','Medium','Low','Medium','Low','Low','Low'],
+                  solutions: ['agent365','entra','defenderxdr'] },
+                { threat: 'Resource Abuse',           levels: ['Low','Low','Medium','Medium','Low','Low','Medium','Low'],
+                  solutions: ['agent365','defendercloud','policies','dashboard'] },
+                { threat: 'Network Abuse / Phishing', levels: ['None','Low','Medium','Low','Low','None','Low','None'],
+                  solutions: ['agent365','defenderxdr','defendercloud'] },
+                { threat: 'Hard-to-Trace Behavior',   levels: ['Low','Medium','High','Medium','Medium','Low','Medium','Medium'],
+                  solutions: ['agent365','dashboard','defenderxdr','purview'] },
+                { threat: 'Lateral Movement',         levels: ['None','Low','Medium','Low','Low','None','Medium','None'],
+                  solutions: ['agent365','entra','defenderxdr','defendercloud'] }
+            ]
+        },
+        foundry: {
+            label: 'Azure Foundry Agents',
+            agentTypes: ['Tool Executor','Computer Access','Multi-Agent','Web-Connected','Autonomous LLM','API/Plugin','Voice Agent','Edge Agent'],
+            threats: [
+                { threat: 'Prompt Injection',         levels: ['Medium','High','Very High','Very High','Very High','Medium','Medium','Low'],
+                  solutions: ['agent365','foundry','defendercloud','purview'] },
+                { threat: 'Command Execution',        levels: ['Low','High','High','Medium','Very High','Medium','Medium','Low'],
+                  solutions: ['agent365','defenderxdr','defendercloud','entra','policies'] },
+                { threat: 'Data Leakage',             levels: ['Medium','High','Very High','Very High','Very High','Medium','Medium','Low'],
+                  solutions: ['agent365','purview','defendercloud'] },
+                { threat: 'Identity Impersonation',   levels: ['Low','High','High','High','High','Medium','High','Low'],
+                  solutions: ['agent365','entra','defenderxdr'] },
+                { threat: 'Resource Abuse',           levels: ['Medium','High','Very High','Medium','Very High','Medium','Medium','Low'],
+                  solutions: ['agent365','defendercloud','policies','dashboard'] },
+                { threat: 'Network Abuse / Phishing', levels: ['Low','High','Very High','Very High','Very High','Medium','Low','None'],
+                  solutions: ['agent365','defenderxdr','defendercloud'] },
+                { threat: 'Hard-to-Trace Behavior',   levels: ['Low','High','Very High','Very High','Very High','Medium','Medium','Low'],
+                  solutions: ['agent365','dashboard','defenderxdr','purview','foundry'] },
+                { threat: 'Lateral Movement',         levels: ['None','Medium','Very High','Medium','High','Medium','None','None'],
+                  solutions: ['agent365','entra','defenderxdr','defendercloud'] }
+            ]
+        },
+        hybrid: {
+            label: 'Hybrid Agents',
+            agentTypes: ['Grounded RAG','Declarative + Tools','Custom Orchestrator','Studio + Foundry','Teams + LLM','Plugin Bridge','Multi-Modal','Enterprise Copilot'],
+            threats: [
+                { threat: 'Prompt Injection',         levels: ['High','High','Very High','Very High','Very High','High','High','Very High'],
+                  solutions: ['agent365','foundry','defendercloud','purview'] },
+                { threat: 'Command Execution',        levels: ['Medium','Medium','High','High','Very High','Medium','High','Very High'],
+                  solutions: ['agent365','defenderxdr','defendercloud','entra','policies'] },
+                { threat: 'Data Leakage',             levels: ['High','High','Very High','Very High','Very High','High','High','Very High'],
+                  solutions: ['agent365','purview','defendercloud'] },
+                { threat: 'Identity Impersonation',   levels: ['Medium','Medium','High','High','High','Medium','High','Very High'],
+                  solutions: ['agent365','entra','defenderxdr'] },
+                { threat: 'Resource Abuse',           levels: ['Medium','High','Very High','High','Very High','Medium','High','Very High'],
+                  solutions: ['agent365','defendercloud','policies','dashboard'] },
+                { threat: 'Network Abuse / Phishing', levels: ['Low','Medium','High','Very High','Very High','Medium','Medium','Very High'],
+                  solutions: ['agent365','defenderxdr','defendercloud'] },
+                { threat: 'Hard-to-Trace Behavior',   levels: ['High','High','Very High','Very High','Very High','High','High','Very High'],
+                  solutions: ['agent365','dashboard','defenderxdr','purview','foundry'] },
+                { threat: 'Lateral Movement',         levels: ['Low','Medium','High','High','Very High','Medium','Medium','Very High'],
+                  solutions: ['agent365','entra','defenderxdr','defendercloud'] }
+            ]
+        }
+    };
+
+    let activeAgentMode = 'foundry';
+
+    function getActiveThreats() { return AGENT_MODES[activeAgentMode].threats; }
+    function getActiveAgentTypes() { return AGENT_MODES[activeAgentMode].agentTypes; }
+
+    function buildRiskHeatmap() {
+        const thead = document.getElementById('riskHeatmapHead');
+        const tbody = document.getElementById('riskHeatmapBody');
+        if (!thead || !tbody) return;
+        /* rebuild header */
+        const agentTypes = getActiveAgentTypes();
+        thead.innerHTML = '';
+        const headTr = document.createElement('tr');
+        const firstTh = document.createElement('th');
+        firstTh.textContent = 'Threat Type';
+        headTr.appendChild(firstTh);
+        agentTypes.forEach(name => {
+            const th = document.createElement('th');
+            th.textContent = name;
+            headTr.appendChild(th);
+        });
+        thead.appendChild(headTr);
+        /* rebuild body */
+        tbody.innerHTML = '';
+        getActiveThreats().forEach((row, ri) => {
+            const tr = document.createElement('tr');
+            const td0 = document.createElement('td');
+            td0.textContent = row.threat;
+            tr.appendChild(td0);
+            row.levels.forEach((lvl, ci) => {
+                const td = document.createElement('td');
+                td.className = RISK_CLASS[lvl] || '';
+                td.dataset.threat = ri;
+                td.dataset.agent = ci;
+                const span = document.createElement('span');
+                span.textContent = lvl;
+                td.appendChild(span);
+                const shield = document.createElement('span');
+                shield.className = 'risk-shield';
+                shield.textContent = '\u{1F6E1}';
+                td.appendChild(shield);
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+
+    function updateRiskHeatmap() {
+        let coveredThreats = 0, gapThreats = 0;
+        getActiveThreats().forEach((row, ri) => {
+            const hasCoverage = row.solutions.some(s => adoptionState[s] && adoptionState[s].inUse);
+            if (hasCoverage) coveredThreats++; else gapThreats++;
+            const cells = document.querySelectorAll('#riskHeatmapBody tr:nth-child(' + (ri + 1) + ') td:not(:first-child)');
+            cells.forEach(td => {
+                const shield = td.querySelector('.risk-shield');
+                if (shield) shield.classList.toggle('visible', hasCoverage);
+            });
+        });
+        const covEl = document.getElementById('riskCovered');
+        const gapEl = document.getElementById('riskGaps');
+        if (covEl) covEl.textContent = '\u{1F6E1}\uFE0F ' + coveredThreats + ' threat' + (coveredThreats !== 1 ? 's' : '') + ' covered';
+        if (gapEl) gapEl.textContent = '\u26A0\uFE0F ' + gapThreats + ' gap' + (gapThreats !== 1 ? 's' : '');
+    }
+
+    function switchAgentMode(mode) {
+        if (!AGENT_MODES[mode]) return;
+        activeAgentMode = mode;
+        document.querySelectorAll('#riskModeToggle .risk-mode-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.mode === mode);
+        });
+        riskPopover?.classList.remove('show');
+        buildRiskHeatmap();
+        updateRiskHeatmap();
+    }
+
+    /* Mode toggle click handler */
+    document.getElementById('riskModeToggle')?.addEventListener('click', (e) => {
+        const btn = e.target.closest('.risk-mode-btn');
+        if (btn && btn.dataset.mode) switchAgentMode(btn.dataset.mode);
+    });
+
+    /* Popover on cell click */
+    const riskPopover = document.getElementById('riskPopover');
+    document.getElementById('riskHeatmap')?.addEventListener('click', (e) => {
+        const td = e.target.closest('td[data-threat]');
+        if (!td) { riskPopover.classList.remove('show'); return; }
+        const ri = parseInt(td.dataset.threat);
+        const ci = parseInt(td.dataset.agent);
+        const threats = getActiveThreats();
+        const row = threats[ri];
+        const agentName = getActiveAgentTypes()[ci];
+        const level = row.levels[ci];
+
+        let html = '<h4>' + agentName + '</h4>';
+        html += '<div class="rdp-threat">' + row.threat + ' \u2014 <strong>' + level + ' Risk</strong></div>';
+        html += '<div class="rdp-solutions">';
+        row.solutions.forEach(sol => {
+            const inUse = adoptionState[sol] && adoptionState[sol].inUse;
+            const statusCls = inUse ? 'in-use' : 'not-in-use';
+            const statusTxt = inUse ? '\u2713 In Use' : 'Not in Use';
+            html += '<div class="rdp-sol"><span class="rdp-status ' + statusCls + '">' + statusTxt + '</span> ' + SOLUTION_NAMES[sol] + '</div>';
+        });
+        html += '</div>';
+        riskPopover.innerHTML = html;
+        riskPopover.classList.add('show');
+
+        const rect = td.getBoundingClientRect();
+        let left = rect.right + 8;
+        let top = rect.top;
+        if (left + 320 > window.innerWidth) left = rect.left - 328;
+        if (top + 200 > window.innerHeight) top = window.innerHeight - 210;
+        riskPopover.style.left = left + 'px';
+        riskPopover.style.top = top + 'px';
+    });
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.risk-heatmap') && !e.target.closest('.risk-detail-popover')) {
+            riskPopover?.classList.remove('show');
+        }
+    });
+
+    buildRiskHeatmap();
+    updateRiskHeatmap();
+
+    // Toggle handlers
+    document.querySelectorAll('input[data-toggle]').forEach(cb => {
+        cb.addEventListener('change', (e) => {
+            e.stopPropagation();
+            const sol = cb.dataset.toggle;
+            adoptionState[sol].inUse = cb.checked;
+            saveState(adoptionState);
+            renderAdoption();
+        });
+        cb.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') e.stopPropagation();
+        });
+    });
+
+    // Maturity segment handlers
+    document.querySelectorAll('.maturity-seg').forEach(seg => {
+        seg.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const bar = seg.closest('.maturity-bar');
+            const sol = bar.dataset.maturity;
+            const lvl = parseInt(seg.dataset.level);
+            adoptionState[sol].maturity = (adoptionState[sol].maturity === lvl) ? -1 : lvl;
+            saveState(adoptionState);
+            renderAdoption();
+        });
+        seg.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                e.stopPropagation();
+                seg.click();
+            }
+        });
+    });
+
+    renderAdoption();
+
+    /* ── Flip Cards ──────────────────────────────────────── */
+    document.querySelectorAll('.flip-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            // Don't flip when clicking a link
+            if (e.target.closest('a')) return;
+            card.classList.toggle('flipped');
+        });
+        card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                if (e.target.closest('a')) return;
+                e.preventDefault();
+                card.classList.toggle('flipped');
+            }
+        });
+    });
+
+    /* ── Card Entrance Animation ─────────────────────────── */
+    function animateCards(panel) {
+        const cards = panel.querySelectorAll('.flip-card, .solution-tile');
+        cards.forEach((card, i) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(24px)';
+            setTimeout(() => {
+                card.style.transition = `opacity 0.45s ease ${i * 0.06}s, transform 0.45s ease ${i * 0.06}s`;
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 30);
+        });
+    }
+
+    /* ── URL Hash Routing ────────────────────────────────── */
+    function loadFromHash() {
+        const hash = location.hash.slice(1);
+        switchTab(hash || 'overview', false);
+    }
+
+    window.addEventListener('hashchange', loadFromHash);
+    loadFromHash();
+
+    /* ── Fullscreen ──────────────────────────────────────── */
+    const fsBtn = document.getElementById('fullscreenBtn');
+    fsBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+            document.exitFullscreen();
+        }
+    });
+    document.addEventListener('fullscreenchange', () => {
+        fsBtn.textContent = document.fullscreenElement ? '⛶ Exit' : '⛶ Fullscreen';
+    });
+
+    /* ── Deck Fullscreen Buttons ──────────────────────────── */
+    document.querySelectorAll('.btn-fullscreen-deck').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const key = btn.dataset.fullscreen;
+            const frame = document.getElementById('deck-' + key);
+            if (!frame) return;
+            if (document.fullscreenElement === frame) {
+                document.exitFullscreen().catch(() => {});
+            } else if (frame.requestFullscreen) {
+                frame.requestFullscreen().catch(() => {});
+            }
+        });
+    });
+    /* Update deck fullscreen button text on fullscreen change */
+    document.addEventListener('fullscreenchange', () => {
+        document.querySelectorAll('.btn-fullscreen-deck').forEach(btn => {
+            const key = btn.dataset.fullscreen;
+            const frame = document.getElementById('deck-' + key);
+            btn.textContent = (document.fullscreenElement === frame) ? '⛶ Exit' : '⛶ Fullscreen';
+        });
+    });
+});
+</script>
+
+</body>
+</html>
